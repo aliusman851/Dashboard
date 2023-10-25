@@ -1,26 +1,17 @@
  /* styles.css */
 
- body {
-    background-color: #f0f0f0;
-    font-family: Arial, sans-serif;
-}
-
-.nav-list {
-    padding: 0;
+.heading {
+    padding:0;
     height: 50px; /* Adjust the height as needed */
     width:fit-content;
-    border: 5px solid #ddd;
-    border-radius: 70px;
-    border-bottom: 10px solid #ddd;
-    background-color:aliceblue;
     margin-left: auto;
     margin-right: auto;
  
  
 }
-h3.nav-list {
+h3.heading {
      /* Adjust the value as needed */
-    color: black;
+    color:cyan;
     padding-left: 8%;
     
 }
