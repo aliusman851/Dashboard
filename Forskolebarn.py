@@ -2,6 +2,9 @@ import streamlit as st
 import plotly.express as px
 import requests
 import pandas as pd
+from io import BytesIO
+
+
 def fetch_data(api_url):
     response = requests.get(api_url)
     if response.status_code == 200:
@@ -27,6 +30,12 @@ def show():
             fig = px.line(df_ar, x='ar', y='barn', title='Barn i kommunala förskola, andel(%) av inskrivna barn')
             
             st.plotly_chart(fig)
+            output = BytesIO()
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                df_ar.to_excel(writer, sheet_name='Sheet1', index=False)
+            st.download_button(label='Ladda ner excel', data=output, file_name='FÖrskolebarn.xlsx', key='Forskolebarn')
+           
+
         else:
             st.warning("No data to display.")
 

@@ -15,4 +15,10 @@ h3.heading {
     padding-left: 8%;
     
 }
+.icon {
+ width: 24px;
+ height: 24px;
+ background-image: url('C:\\Users\\alius\\OneDrive\\Skrivbord\\Dashboard\\Image\\graph-963016_1280.png');
+ background-size: cover;
+}
 
