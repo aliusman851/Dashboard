@@ -28,7 +28,16 @@ def show():
             df =pd.DataFrame(data)
             df_ar= pd.json_normalize(df['data'])
             #pivot_df = df_ar.pivot(index='datum', columns='ar', values='elever')
-            fig = px.line(df_ar, x='ar', y='elever', title='Elever i åk 9 som är behöriga till yrkesprogram kommunala')
+            fig = px.pie(df_ar, 
+                         values='elever',
+                         names='ar',
+                        title='Elever i åk 9 som är behöriga till yrkesprogram kommunala',
+                        template=("plotly_white"),
+                        )
+            fig.update_layout(
+                plot_bgcolor="rgba(2,0,1,4)",
+                xaxis=(dict(showgrid=False))
+            )
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:

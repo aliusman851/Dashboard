@@ -26,7 +26,16 @@ def show():
             # Convert data to a Pandas DataFrame
             df =pd.DataFrame(data)
             df_ar= pd.json_normalize(df['data'])
-            fig = px._chart_types.density_contour(df_ar, x='ar', y=['sarskiltboende_kvinnor', 'sarskiltboende_man', 'sarskiltboende_totalt'], title='Brukarbedömning särskilt boende äldreomsorg-bemötande, andel(%)')
+            fig = px.bar(df_ar, 
+                                                  x='ar', 
+                                                  y=['sarskiltboende_kvinnor', 'sarskiltboende_man', 'sarskiltboende_totalt'], 
+                                                  title='Brukarbedömning särskilt boende äldreomsorg-bemötande, andel(%)',
+                                                  template= "plotly_white")
+            fig.update_layout(
+                xaxis=dict(tickmode="linear"),
+                plot_bgcolor="rgba(0,0,0,0)",
+                yaxis=(dict(showgrid=False))
+            )
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
@@ -38,3 +47,4 @@ def show():
 
 if __name__ == "__main__":
     show()
+  

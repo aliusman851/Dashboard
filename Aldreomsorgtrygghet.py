@@ -26,7 +26,17 @@ def show():
             # Convert data to a Pandas DataFrame
             df =pd.DataFrame(data)
             df_ar= pd.json_normalize(df['data'])
-            fig = px._chart_types.ecdf(df_ar, x='ar', y=['hemtjansttrygghet_kvinnor', 'hemtjansttrygghet_man', 'hemtjansttrygghet_totalt'], title='Brukarbedömning hemtjänst äldreomsorg-trygghet, andel(%)')
+            fig = px.bar( df_ar,
+                y= ['hemtjansttrygghet_kvinnor','hemtjansttrygghet_man', 'hemtjansttrygghet_totalt'], 
+                x= "ar" ,
+                title='Brukarbedömning hemtjänst äldreomsorg-trygghet, andel(%)',
+             template=("plotly_white"),
+            
+            )
+            fig.update_layout(
+                plot_bgcolor="rgba(0,0,0,4)",
+                xaxis=(dict(showgrid=False))
+                  )
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
