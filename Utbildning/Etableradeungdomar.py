@@ -16,9 +16,10 @@ def fetch_data(api_url):
 
 # This is first streamlit demo
 def show():
-   api_url = "https://nav.utvecklingfalkenberg.se/items/hemtjanst_aldreomsorgbehandling"
+   
+    api_url = "https://nav.utvecklingfalkenberg.se/items/etablerade_ungdom"
 
-   if api_url:
+    if api_url:
         # Fetch data
         data = fetch_data(api_url)
 
@@ -26,12 +27,17 @@ def show():
             # Convert data to a Pandas DataFrame
             df =pd.DataFrame(data)
             df_ar= pd.json_normalize(df['data'])
-            fig = px.line(df_ar, x='ar', y=['behandlade_kvinnor', 'behandlade_man', 'behandlas_totalt'], title='Brukarbedömning hemtjänst äldreomsorg-bemötande, andel(%)')
+            fig = px._chart_types.funnel(df_ar, 
+                                         x='ar', 
+                                         y=['etablerade_kvinnor', 'etablerade_man', 'etablerade_totalt'], 
+                                         title='Ungdomar som är etablerade på arbetsmarknaden eller studerar 2 år efter slutförd gymnasieutbildning, kommunala skolor, andel(%)',
+                                         )
+            
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 df_ar.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Aldreomsorgbehandling.xlsx', key='trgghet')
+            st.download_button(label='Ladda ner excel', data=output, file_name='Etebleradeungdomar.xlsx', key='Etableradeundomar')
                  
         else:
             st.warning("No data to display.")

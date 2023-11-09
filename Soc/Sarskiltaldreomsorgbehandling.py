@@ -27,10 +27,11 @@ def show():
             df =pd.DataFrame(data)
             df_ar= pd.json_normalize(df['data'])
             fig = px.bar(df_ar, 
-                                                  x='ar', 
-                                                  y=['sarskiltboende_kvinnor', 'sarskiltboende_man', 'sarskiltboende_totalt'], 
-                                                  title='Brukarbedömning särskilt boende äldreomsorg-bemötande, andel(%)',
-                                                  template= "plotly_white")
+                          x='ar', 
+                          y=['sarskiltboende_kvinnor', 'sarskiltboende_man', 'sarskiltboende_totalt'], 
+                          title='Brukarbedömning särskilt boende äldreomsorg-bemötande, andel(%)',
+                          template= "plotly_white",
+                          )
             fig.update_layout(
                 xaxis=dict(tickmode="linear"),
                 plot_bgcolor="rgba(0,0,0,0)",

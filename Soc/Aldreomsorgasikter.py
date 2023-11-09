@@ -26,7 +26,11 @@ def show():
             # Convert data to a Pandas DataFrame
             df =pd.DataFrame(data)
             df_ar= pd.json_normalize(df['data'])
-            fig = px.line(df_ar, x='ar', y=['hemtjanstasikter_kvinnor', 'hemtjanstasikter_man', 'hemtjanstasikter_totalt'], title='Brukarbedömning hemtjänst äldreomsorg-hänsyn till åsikter och önskemål, andel(%)')
+            fig = px.line(df_ar,
+                           x='ar', 
+                           y=['hemtjanstasikter_kvinnor', 'hemtjanstasikter_man', 'hemtjanstasikter_totalt'], 
+                           title='Brukarbedömning hemtjänst äldreomsorg-hänsyn till åsikter och önskemål, andel(%)',
+                           )
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:

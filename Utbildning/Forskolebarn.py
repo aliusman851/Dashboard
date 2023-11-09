@@ -27,7 +27,11 @@ def show():
             # Convert data to a Pandas DataFrame
             df =pd.DataFrame(data)
             df_ar= pd.json_normalize(df['data'])
-            fig = px.line(df_ar, x='ar', y='barn', title='Barn i kommunala förskola, andel(%) av inskrivna barn')
+            fig = px.line(df_ar, 
+                          x='ar', 
+                          y='barn',
+                         title='Barn i kommunala förskola, andel(%) av inskrivna barn',
+                         )
             
             st.plotly_chart(fig)
             output = BytesIO()

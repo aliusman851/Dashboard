@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 from io import BytesIO
 
+
 def fetch_data(api_url):
     response = requests.get(api_url)
     if response.status_code == 200:
@@ -16,7 +17,7 @@ def fetch_data(api_url):
 # This is first streamlit demo
 def show():
    
-    api_url = "https://nav.utvecklingfalkenberg.se/items/gymnasieutbildad"
+    api_url = "https://nav.utvecklingfalkenberg.se/items/examinerade_gymnasieelev"
 
     if api_url:
         # Fetch data
@@ -26,13 +27,17 @@ def show():
             # Convert data to a Pandas DataFrame
             df =pd.DataFrame(data)
             df_ar= pd.json_normalize(df['data'])
-            fig = px.bar(df_ar, x='ar', y=['utbildade_kvinnor', 'utbildade_man', 'utbildade_totalt'], title='Invånare 25-64 år med eftergymnasial utbildning')
+            fig = px.line(df_ar, 
+                          x='ar', 
+                          y='elev',  
+                          title='Gymnasieelever med examen inom 3 år, kommunala skolor, andel(%), avvikelse från modellberäknat värde',
+                          )
             
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 df_ar.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Gymnasieutbildad.xlsx', key='Gymnasieutbildad')
+            st.download_button(label='Ladda ner excel', data=output, file_name='Gymnasieelever.xlsx', key='Gymnasieelever')
            
         else:
             st.warning("No data to display.")

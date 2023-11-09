@@ -1,6 +1,7 @@
  /* styles.css */
 
-.heading {
+
+ .heading {
     padding:0;
     height: 50px; /* Adjust the height as needed */
     width:fit-content;
@@ -21,4 +22,3 @@ h3.heading {
  background-image: url('C:\\Users\\alius\\OneDrive\\Skrivbord\\Dashboard\\Image\\graph-963016_1280.png');
  background-size: cover;
 }
-

@@ -6,6 +6,7 @@
 
  secondaryBackgroundColor = "#0083B8"
 
- textColor = "#FFF"
+ textColor = "#FFFF00"
+ #textColor = "#FFF"
 
  font = "sans serif"
