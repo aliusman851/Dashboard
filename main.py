@@ -1,7 +1,6 @@
 import streamlit as st
 import plotly.exceptions as px
 from Utbildning.Yrkesprogram import show as show_yrkesprogram
-#from Charts.Barchart import show as show_Barchart
 from Utbildning.Gymnasieelever import show as show_gymnasieelever
 from Utbildning.Forskolebarn import show as show_forskolebarn
 from Utbildning.Gymnasieutbildad import show as show_gymnasieutbildad
@@ -12,6 +11,7 @@ from Soc.Aldreomsorgtrygghet import show as show_Aldreomsorgtrygghet
 from Soc.Sarskiltaldreomsorgbehandling import show as show_Sarskiltaldreomsorgbehandling
 from Soc.Sarskiltaldreomsorgasikter import show as show_Sarskiltaldreomsorgasikter
 from Soc.Sarskiltaldreomsorgtrygghet import show as show_Sarskiltaldreomsorgtrygghet
+from Jamforelsekommuner.Kvalitetsindex import show as show_Kvalitetsindex
 
 st.set_page_config(page_title="Falkenberg Dashboard",
                    page_icon=":bar_chart:",
@@ -46,43 +46,31 @@ elif navigation_utbildning == "Gymnasieutbildad":
 elif navigation_utbildning == "Etablerade ungdomar":
     show_etableradeungdomar()
 
-#option =  ["Välj", "Bar chart", "Line chart", "Pie chart"]
-#navigation_charts = st.sidebar.selectbox("Graf", option)   
-#if  navigation_charts == "Pie chart" and navigation_utbildning == "Behorighet yrkesprogram":
- #        show_Barchart()"""
+# Define your list of navigation items
+st.sidebar.title("")
+navigation = ["Välj","Hemtjänst äldreomsorg behandling", "Hemtjänst äldreomsorg åsikter", "Hemtjänst äldreomsorg trygghet", "Särskilt Äldreomsorg Behandling", "Särskilt äldreomsorg åsikter","Särskilt äldreomsorg trygghet"]
+navigation_SOC = st.sidebar.selectbox('SOC', navigation)
 
-navigation=["Hemtjänst äldreomsorg behandling", "Hemtjänst äldreomsorg åsikter", "Hemtjänst äldreomsorg trygghet", "Särskilt Äldreomsorg Behandling", "Särskilt äldreomsorg åsikter", "Särskilt äldreomsorg trygghet"]
-navigation_soc = st.sidebar.multiselect("soc", navigation)
-col1, col2 = st.columns(2) 
-with col1:
-  
-     if "Hemtjänst äldreomsorg behandling" in navigation_soc:
+if navigation_SOC == "Hemtjänst äldreomsorg behandling" :
         show_Aldreomsorgbehandling()
-     if "Hemtjänst äldreomsorg trygghet" in navigation_soc:
+elif navigation_SOC == "Hemtjänst äldreomsorg trygghet":
         show_Aldreomsorgtrygghet()
-     if "Särskilt äldreomsorg åsikter" in navigation_soc:
+elif navigation_SOC == "Hemtjänst äldreomsorg åsikter": 
+        show_Aldreomsorgasikter()
+elif navigation_SOC == "Särskilt Äldreomsorg Behandling":
+        show_Sarskiltaldreomsorgbehandling()
+elif  navigation_SOC == "Särskilt äldreomsorg trygghet" :
+        show_Sarskiltaldreomsorgtrygghet()
+
+elif navigation_SOC == "Särskilt äldreomsorg åsikter":
         show_Sarskiltaldreomsorgasikter()
-with col2:    
-   if "Hemtjänst äldreomsorg åsikter" in navigation_soc: 
-        show_Aldreomsorgasikter()
-   if "Särskilt Äldreomsorg Behandling" in navigation_soc:
-        show_Sarskiltaldreomsorgbehandling()
-   if  "Särskilt äldreomsorg trygghet" in navigation_soc:
-        show_Sarskiltaldreomsorgtrygghet()
 
-Navigation = st.sidebar.radio("Soc", ["Hemtjänst äldreomsorg behandling", "Hemtjänst äldreomsorg åsikter", "Hemtjänst äldreomsorg trygghet", "Särskilt Äldreomsorg Behandling", "Särskilt äldreomsorg åsikter", "Särskilt äldreomsorg trygghet"])
-if Navigation == "Hemtjänst äldreomsorg behandling":
-        show_Aldreomsorgbehandling()
-elif Navigation == "Hemtjänst äldreomsorg trygghet":
-        show_Aldreomsorgtrygghet()
-elif Navigation == "Särskilt äldreomsorg åsikter":
-        show_Sarskiltaldreomsorgasikter()   
-elif Navigation == "Hemtjänst äldreomsorg åsikter": 
-        show_Aldreomsorgasikter()
-elif Navigation == "Särskilt Äldreomsorg Behandling":
-        show_Sarskiltaldreomsorgbehandling()
-elif Navigation == "Särskilt äldreomsorg trygghet":
-        show_Sarskiltaldreomsorgtrygghet()
+st.sidebar.title("Kommuner Jämförelse ")
+navigation_options = ["Välj","Kvalitetsindex LSS", "Hemtjänst äldreomsorg åsikter", "Hemtjänst äldreomsorg trygghet", "Särskilt Äldreomsorg Behandling", "Särskilt äldreomsorg åsikter","Särskilt äldreomsorg trygghet"]
+navigation_Socio = st.sidebar.selectbox('socioekonomi', navigation_options)
+if navigation_Socio == "Kvalitetsindex LSS" :
+        show_Kvalitetsindex()
+
 
 hide_st_style = """
                 <style>

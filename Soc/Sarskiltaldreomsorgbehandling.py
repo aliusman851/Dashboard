@@ -22,7 +22,7 @@ def show():
         # Fetch data
         data = fetch_data(api_url)
 
-        if data:
+        if data is not None and len(data) > 0:
             # Convert data to a Pandas DataFrame
             df =pd.DataFrame(data)
             df_ar= pd.json_normalize(df['data'])

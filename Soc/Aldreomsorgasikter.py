@@ -7,9 +7,17 @@ from io import BytesIO
 
 def fetch_data(api_url):
     response = requests.get(api_url)
-    if response.status_code == 200:
-        data = response.json()
-        return data
+    if response.status_code == 200 :
+        res_data = response.json()
+        if 'data' in res_data and len(res_data['data']) > 0:
+            data = res_data['data']
+            return data
+         
+        else:
+            st.error("Failed to fetch data from API")
+            return None
+        
+        
     else:
         st.error("Failed to fetch data from API")
         return None
@@ -22,7 +30,7 @@ def show():
         # Fetch data
         data = fetch_data(api_url)
 
-        if data:
+        if data is not None and len(data) > 0:
             # Convert data to a Pandas DataFrame
             df =pd.DataFrame(data)
             df_ar= pd.json_normalize(df['data'])
