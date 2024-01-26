@@ -11,8 +11,10 @@ def fetch_data(api_url):
         res_data = response.json()
         if 'data' in res_data and len(res_data['data']) > 0:
             data = res_data['data']
-            return data
-         
+            df =pd.DataFrame(data)
+            #df_ar= pd.json_normalize(df['data'])
+            return df
+        
         else:
             st.error("Failed to fetch data from API")
             return None
@@ -28,13 +30,12 @@ def show():
 
    if api_url:
         # Fetch data
-        data = fetch_data(api_url)
+        df = fetch_data(api_url)
 
-        if data is not None and len(data) > 0:
+        if df is not None and len(df) > 0:
             # Convert data to a Pandas DataFrame
-            df =pd.DataFrame(data)
-            df_ar= pd.json_normalize(df['data'])
-            fig = px.line(df_ar,
+            
+            fig = px.line(df,
                            x='ar', 
                            y=['hemtjanstasikter_kvinnor', 'hemtjanstasikter_man', 'hemtjanstasikter_totalt'], 
                            title='Brukarbedömning hemtjänst äldreomsorg-hänsyn till åsikter och önskemål, andel(%)',
@@ -42,7 +43,7 @@ def show():
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                df_ar.to_excel(writer, sheet_name='Sheet1', index=False)
+                df.to_excel(writer, sheet_name='Sheet1', index=False)
             st.download_button(label='Ladda ner excel', data=output, file_name='Aldreomsorgbehandling.xlsx', key='asikter')
                  
         else:

@@ -8,8 +8,16 @@ from io import BytesIO
 def fetch_data(api_url):
     response = requests.get(api_url)
     if response.status_code == 200:
-        data = response.json()
-        return data
+        res_data = response.json()
+        if 'data' in res_data and len(res_data['data']) > 0:
+            data = res_data['data']
+            df =pd.DataFrame(data)
+            #df_ar= pd.json_normalize(df['data'])
+            return df
+         
+        else:
+            st.error("Failed to fetch data from API")
+            return None
     else:
         st.error("Failed to fetch data from API")
         return None
@@ -21,13 +29,11 @@ def show():
 
     if api_url:
         # Fetch data
-        data = fetch_data(api_url)
+        df = fetch_data(api_url)
 
-        if data is not None and len(data) > 0:
-            # Convert data to a Pandas DataFrame
-            df =pd.DataFrame(data)
-            df_ar= pd.json_normalize(df['data'])
-            fig = px.line(df_ar, 
+        if df is not None and len(df) > 0:
+            
+            fig = px.line(df, 
                           x='ar', 
                           y='elev',  
                           title='Gymnasieelever med examen inom 3 år, kommunala skolor, andel(%), avvikelse från modellberäknat värde',
@@ -36,7 +42,7 @@ def show():
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                df_ar.to_excel(writer, sheet_name='Sheet1', index=False)
+                df.to_excel(writer, sheet_name='Sheet1', index=False)
             st.download_button(label='Ladda ner excel', data=output, file_name='Gymnasieelever.xlsx', key='Gymnasieelever')
            
         else:
