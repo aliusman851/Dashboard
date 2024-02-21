@@ -56,6 +56,8 @@ def show():
    api6_url = "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Oskarshamn"
    
    merged_data = merge_data(api1_url, api2_url,api3_url,api4_url,api5_url,api6_url)
+   merged_data['KvalIndex'] = merged_data['KvalIndex'].round(0)
+
    #st.dataframe(merged_data)
    #x_id = [0,1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16]
    #merged_data['x_id'] = x_id
@@ -73,6 +75,8 @@ def show():
                        x='ar', 
                        y='KvalIndex',
                        #animation_frame='ar',
+                       width=1000,
+                       #height=400,
                        color ='Kommun',
                        size_max=35,
                        size='KvalIndex',  # Marker size based on 'KvalIndex' values
@@ -87,8 +91,11 @@ def show():
         #col = st.color_picker('Select a plot color')
         #fig.update_layout(showlegend=False)
         fig.update_traces(textposition='bottom center', marker={"opacity":0.7})
+        #st.markdown("<h1 style='font-size:15px;'>Kvalitetsindex LSS, andel(%)", unsafe_allow_html=True)
+         
         #fig.update_traces(marker=dict(color= col))
         fig.update_layout(
+            margin = dict(t=50, l=0, r=200, b=0),
             showlegend=False,
             xaxis_title='Year',
             yaxis_title='KvalIndex',

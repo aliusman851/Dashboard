@@ -12,11 +12,25 @@ from Soc.Sarskiltaldreomsorgbehandling import show as show_Sarskiltaldreomsorgbe
 from Soc.Sarskiltaldreomsorgasikter import show as show_Sarskiltaldreomsorgasikter
 from Soc.Sarskiltaldreomsorgtrygghet import show as show_Sarskiltaldreomsorgtrygghet
 from Jamforelsekommuner.Kvalitetsindex import show as show_Kvalitetsindex
+from Jamforelsekommuner.SarskiltboendeIndex import show as show_SarskiltboendeIndex
+from Jamforelsekommuner.ForskolebarnIndex import show as show_ForskolebarnIndex
 
 st.set_page_config(page_title="Falkenberg Dashboard",
                    page_icon=":bar_chart:",
                    layout="centered",
                    )
+st.markdown(
+    """
+    <style>
+    @media (max-width: 600px) {
+       body {
+        font-size: 14px; /* Decrease font size for smaller screens */
+    }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 
 with open('styles.css', 'r') as css_file:
@@ -66,10 +80,16 @@ elif navigation_SOC == "Särskilt äldreomsorg åsikter":
         show_Sarskiltaldreomsorgasikter()
 
 st.sidebar.title("Kommuner Jämförelse ")
-navigation_options = ["Välj","Kvalitetsindex LSS", "Hemtjänst äldreomsorg åsikter", "Hemtjänst äldreomsorg trygghet", "Särskilt Äldreomsorg Behandling", "Särskilt äldreomsorg åsikter","Särskilt äldreomsorg trygghet"]
+navigation_options = ["Välj","Kvalitetsindex LSS", "Hemtjänst/särskilt boende)Index", "ForskolebarnIndex", "Särskilt Äldreomsorg Behandling", "Särskilt äldreomsorg åsikter","Särskilt äldreomsorg trygghet"]
 navigation_Socio = st.sidebar.selectbox('socioekonomi', navigation_options)
 if navigation_Socio == "Kvalitetsindex LSS" :
         show_Kvalitetsindex()
+elif navigation_Socio == "Hemtjänst/särskilt boende)Index" : 
+        show_SarskiltboendeIndex()
+elif navigation_Socio == "ForskolebarnIndex" : 
+        show_ForskolebarnIndex()        
+        
+        
 
 
 hide_st_style = """
