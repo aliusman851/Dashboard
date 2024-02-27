@@ -1,5 +1,8 @@
 import streamlit as st
 import plotly.exceptions as px
+from PIL import Image
+import io
+import base64
 from Utbildning.Yrkesprogram import show as show_yrkesprogram
 from Utbildning.Gymnasieelever import show as show_gymnasieelever
 from Utbildning.Forskolebarn import show as show_forskolebarn
@@ -14,24 +17,44 @@ from Soc.Sarskiltaldreomsorgtrygghet import show as show_Sarskiltaldreomsorgtryg
 from Jamforelsekommuner.Kvalitetsindex import show as show_Kvalitetsindex
 from Jamforelsekommuner.SarskiltboendeIndex import show as show_SarskiltboendeIndex
 from Jamforelsekommuner.ForskolebarnIndex import show as show_ForskolebarnIndex
+from Jamforelsekommuner.Gymnasieelever import show as show_Gymnasieelever
+from Jamforelsekommuner.meritvardeavvikelse import show as show_meritvardeavvikelse
+from Jamforelsekommuner.Yrkesprogrambehoriga import show as show_Yrkesprogrambehoriga
+from Jamforelsekommuner.Ekonomiskstandard import show as show_Ekonomiskstandard
+
 
 st.set_page_config(page_title="Falkenberg Dashboard",
                    page_icon=":bar_chart:",
                    layout="centered",
                    )
-st.markdown(
-    """
-    <style>
-    @media (max-width: 600px) {
-       body {
-        font-size: 14px; /* Decrease font size for smaller screens */
-    }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+def encode_image(image_path):
+    with open(image_path, "rb") as f:
+        img_bytes = f.read()
+    img_str = base64.b64encode(img_bytes).decode()
+    return img_str  
+img1= encode_image("C:/Users/Ali usman/Dashboard/Image/chart1.png")
+img2= encode_image("C:/Users/Ali usman/Dashboard/Image/chart2.png")
+img3= encode_image("C:/Users/Ali usman/Dashboard/Image/chart3.png")
+img4= encode_image("C:/Users/Ali usman/Dashboard/Image/sunburst.png")
+img5= encode_image("C:/Users/Ali usman/Dashboard/Image/barchart.png")
+img6= encode_image("C:/Users/Ali usman/Dashboard/Image/linechart.png")
+img7= encode_image("C:/Users/Ali usman/Dashboard/Image/img7.png")
+fbg= encode_image("C:/Users/Ali usman/Dashboard/Image/fbg.jpg")
 
+header_with_image = f"""
+                    <header style="background-image: url('data:image/jpeg;base64,{fbg}');
+                                   background-size: cover;
+                                   background-position: top;
+                                   height: 250px;
+                                   width:1580px; 
+                                   margin-left: -450px;
+                                   position: sticky;
+                                   top: 0;
+                                   right: 0; ">
+                    </header>
+                    """
+
+st.markdown(header_with_image, unsafe_allow_html=True)
 
 with open('styles.css', 'r') as css_file:
     css_text = css_file.read()
@@ -40,66 +63,143 @@ with open('styles.css', 'r') as css_file:
 
 st.title(":bar_chart: Falkenberg Dashboard")
 st.markdown("<style>div.block-container{padding-top:1rem;}</style>", unsafe_allow_html=True) 
+st.header('En sida med visualiseringar av data för olika områden') 
+option_selected= False
 
-
-# Define your list of navigation items
+page_utbildning = {
+     "Välj":"",  
+    "Behorighet yrkesprogram": show_yrkesprogram,
+    "Examinerade gymnasieelev": show_gymnasieelever,
+    "Förskolebarn": show_forskolebarn,
+    "Gymnasieutbildad": show_gymnasieutbildad,
+    "Etablerade ungdomar": show_etableradeungdomar,
+    
+}
+page_Soc = {
+    
+    "Välj":"",
+    "Hemtjänst äldreomsorg behandling":show_Aldreomsorgbehandling, 
+    "Hemtjänst äldreomsorg åsikter":show_Aldreomsorgasikter, 
+    "Hemtjänst äldreomsorg trygghet":show_Aldreomsorgtrygghet, 
+    "Särskilt Äldreomsorg Behandling": show_Sarskiltaldreomsorgbehandling, 
+    "Särskilt äldreomsorg åsikter":show_Sarskiltaldreomsorgasikter,
+    "Särskilt äldreomsorg trygghet":show_Sarskiltaldreomsorgtrygghet
+    
+    
+}
+page_socioekonomi = {
+   
+    "Välj":"",
+    "Kvalitetsindex LSS":show_Kvalitetsindex, 
+    "Hemtjänst/särskilt boende)Index":show_SarskiltboendeIndex,
+    "Barn inskrivna i förskola":show_ForskolebarnIndex,
+    "Gymnasieelever med examen inom 4 år":show_Gymnasieelever,
+    "Elever genomsnittligt meritvärde avvikelse":show_meritvardeavvikelse, 
+    "Elever behöriga till yrkesprogram, hemkommun":show_Yrkesprogrambehoriga, 
+    "Invånare med låg ekonomisk standard(0-19år)":show_Ekonomiskstandard
+}
 st.sidebar.title("Navigation")
-options = ["Välj","Behorighet yrkesprogram", "Examinerade gymnasieelev", "Förskolebarn", "Gymnasieutbildad", "Etablerade ungdomar"]
-navigation_utbildning = st.sidebar.selectbox('Utbildning', options)
+navigation_utbildning = st.sidebar.selectbox('Utbildning', list(page_utbildning.keys()))
+if navigation_utbildning != "Välj":
+    page_utbildning[navigation_utbildning]()
 
 
-if navigation_utbildning == "Behorighet yrkesprogram":
-    show_yrkesprogram()
-
-elif navigation_utbildning == "Examinerade gymnasieelev":
-    show_gymnasieelever()
-elif navigation_utbildning == "Förskolebarn":
-     show_forskolebarn()
-elif navigation_utbildning == "Gymnasieutbildad":
-    show_gymnasieutbildad()
-elif navigation_utbildning == "Etablerade ungdomar":
-    show_etableradeungdomar()
-
-# Define your list of navigation items
+    
 st.sidebar.title("")
-navigation = ["Välj","Hemtjänst äldreomsorg behandling", "Hemtjänst äldreomsorg åsikter", "Hemtjänst äldreomsorg trygghet", "Särskilt Äldreomsorg Behandling", "Särskilt äldreomsorg åsikter","Särskilt äldreomsorg trygghet"]
-navigation_SOC = st.sidebar.selectbox('SOC', navigation)
+navigation_Soc = st.sidebar.selectbox('Soc', list(page_Soc.keys()))
+if navigation_Soc != "Välj":
+    page_Soc[navigation_Soc]()
 
-if navigation_SOC == "Hemtjänst äldreomsorg behandling" :
-        show_Aldreomsorgbehandling()
-elif navigation_SOC == "Hemtjänst äldreomsorg trygghet":
-        show_Aldreomsorgtrygghet()
-elif navigation_SOC == "Hemtjänst äldreomsorg åsikter": 
-        show_Aldreomsorgasikter()
-elif navigation_SOC == "Särskilt Äldreomsorg Behandling":
-        show_Sarskiltaldreomsorgbehandling()
-elif  navigation_SOC == "Särskilt äldreomsorg trygghet" :
-        show_Sarskiltaldreomsorgtrygghet()
-
-elif navigation_SOC == "Särskilt äldreomsorg åsikter":
-        show_Sarskiltaldreomsorgasikter()
 
 st.sidebar.title("Kommuner Jämförelse ")
-navigation_options = ["Välj","Kvalitetsindex LSS", "Hemtjänst/särskilt boende)Index", "ForskolebarnIndex", "Särskilt Äldreomsorg Behandling", "Särskilt äldreomsorg åsikter","Särskilt äldreomsorg trygghet"]
-navigation_Socio = st.sidebar.selectbox('socioekonomi', navigation_options)
-if navigation_Socio == "Kvalitetsindex LSS" :
-        show_Kvalitetsindex()
-elif navigation_Socio == "Hemtjänst/särskilt boende)Index" : 
-        show_SarskiltboendeIndex()
-elif navigation_Socio == "ForskolebarnIndex" : 
-        show_ForskolebarnIndex()        
-        
-        
+navigation_socioekonomi = st.sidebar.selectbox('socioekonomi', list(page_socioekonomi.keys()))
+if navigation_socioekonomi !="Välj":
+    page_socioekonomi[navigation_socioekonomi]()
+
+if (navigation_utbildning != "Välj" or 
+    navigation_Soc != "Välj" or 
+    navigation_socioekonomi != "Välj"):
+    option_selected = True 
+
+if option_selected:
+    st.sidebar.empty()
+
+# Display the image if no option is selected
+if not option_selected:
+    st.sidebar.empty()
+    col1, col2 = st.columns([8,4])  
+    
+    with col1:
+         html_code_col1 = f"""
+        <div id="moving-image-col1" style="position: absolute; top: 50%; left: 50%;  transform: translateX(-50%);  ">
+            <img src="data:image/png;base64,{img1}" style="width: 250px; height: auto;">
+            <img src="data:image/png;base64,{img2}" style="width: 250px; height: auto;">
+            
+         </div>
+         <style>
+             @keyframes moveContinuouslycolone {{
+                0% {{ transform: translateX(-50%); }}
+                50% {{ transform: translateX(-55%); }}
+                100% {{ transform: translateX(-50%); }}
+             }}
+             #moving-image-col1 img {{
+                 animation: moveContinuouslycolone 5s linear infinite;
+              }}
+         </style>
+          """   
+         st.write(html_code_col1, unsafe_allow_html=True)
+    with col2:
+        html_code_col2 = f"""
+        <div id="moving-image-col2" style="position: absolute; top: 50%; left: 150%;  transform: translateX(-50%); ">
+            <img src="data:image/png;base64,{img3}" style="width: 500px; height: 400px;">
+            
+         </div>
+         <style>
+             @keyframes moveContinuouslycoltwo {{
+                0% {{ transform: translateX(-50%); }}
+                50% {{ transform: translateX(-55%); }}
+                100% {{ transform: translateX(-50%); }}
+             }}
+             #moving-image-col2 img {{
+                 animation: moveContinuouslycoltwo 5s linear infinite;
+              }}
+         </style>
+          """     
+        st.write(html_code_col2, unsafe_allow_html=True)
 
 
-hide_st_style = """
-                <style>
-                #MainMenu {visibility: hidden;}
-                footer {visibility: hidden;}
-                header {visibility: hidden;}
-                
-    }}
-                </style>
-                """
-st.markdown(hide_st_style, unsafe_allow_html=True)
+
+
+footer_with_image = f"""
+                  <footer>
+                      <div id="moving-image-footer" style="position: fixed; top: 83%; left: 50%; transform: translateX(-50%);">
+                         <img src="data:image/png;base64,{img1}" style="width: 250px; height: 100px; opacity: 1;">
+                         <img src="data:image/png;base64,{img2}" style="width: 250px; height: 100px; opacity: 0; margin-left: -50px;">
+                         <img src="data:image/png;base64,{img5}" style="width: 250px; height: 100px; opacity: 0; margin-left: -100px; ">
+                         <img src="data:image/png;base64,{img7}" style="width: 250px; height: 200px; opacity: 0; margin-left: -150px; ">
+                      </div>
+                      <style>
+                         @keyframes moveContinuously {{
+                            0% {{ transform: translateX(-350%);  }}
+                            100% {{ transform: translateX(550%); opacity: 50; }}
+                        }}
+                        #moving-image-footer img {{
+                            animation: moveContinuously 24s linear infinite;
+                        }}
+                        #moving-image-footer img:nth-child(1) {{ animation-delay: 0s; }}
+                        #moving-image-footer img:nth-child(2) {{ animation-delay: 8s; }}
+                        #moving-image-footer img:nth-child(3) {{ animation-delay: 16s; }}
+                        #moving-image-footer img:nth-child(4) {{ animation-delay: 24s; }}
+                      </style>
+                   </footer>
+                 """
+    
+       
+                 
+st.markdown(footer_with_image , unsafe_allow_html=True)
+
+
+# Render the header with the image and hide specified elements
+
+
  

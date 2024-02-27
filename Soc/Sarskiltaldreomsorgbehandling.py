@@ -38,6 +38,7 @@ def show():
                           y=['sarskiltboende_kvinnor', 'sarskiltboende_man', 'sarskiltboende_totalt'], 
                           title='Brukarbedömning särskilt boende äldreomsorg-bemötande, andel(%)',
                           template= "plotly_white",
+                          width=800
                           )
             fig.update_layout(
                 xaxis=dict(tickmode="linear"),

@@ -39,6 +39,9 @@ def show():
                            x='ar', 
                            y=['hemtjanstasikter_kvinnor', 'hemtjanstasikter_man', 'hemtjanstasikter_totalt'], 
                            title='Brukarbedömning hemtjänst äldreomsorg-hänsyn till åsikter och önskemål, andel(%)',
+                           #color="Scenario",
+                           markers=True,
+                           width=800,
                            )
             st.plotly_chart(fig)
             output = BytesIO()

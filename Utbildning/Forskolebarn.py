@@ -37,6 +37,9 @@ def show():
                           x='ar', 
                           y='barn',
                          title='Barn i kommunala förskola, andel(%) av inskrivna barn',
+                         markers=True,
+                         text='barn',
+                         width=800
                          )
             
             st.plotly_chart(fig)

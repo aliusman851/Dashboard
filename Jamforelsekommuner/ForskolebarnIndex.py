@@ -7,10 +7,6 @@ import plotly.graph_objects as go
 
 
 
-
-
-
-
 cached_data = {}
 def fetch_data(api_url):
     if api_url in cached_data:
@@ -35,17 +31,24 @@ def show():
    "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Laholm"
    ]
    merged_data = []
+   all_min_value=[]
+   all_max_value=[]
    for api_url in api_urls:
         fetchdata = fetch_data(api_url)
         df_ar1= pd.json_normalize(fetchdata['data'])
         #df1 = pd.DataFrame(merged_data)
-        
+        min_value, max_value = df_ar1['Index_Totalt'].min(), df_ar1['Index_Totalt'].max()
+        all_min_value.append(min_value)
+        all_max_value.append(max_value)
         
         merged_data.append(df_ar1)
         merged_dfram = pd.concat(merged_data, ignore_index=True)
         merged_dfram['Index_Totalt'] = merged_dfram['Index_Totalt'].round(0)
+        #merged_dfram['Total_percentage'] = 100
+        #merged_dfram['percentage'] = (merged_dfram['Index_Totalt'] / merged_dfram['Total_percentage']) * 100
         #merged_df = merged_dfram.sort_values(by='ar')
         #st.write(merged_dfram)
+        #st.write(min_value,max_value)
           
         
    if merged_dfram is not None and len(merged_data) > 0:
@@ -66,87 +69,45 @@ def show():
                          range_y=[30,100],
                          
                 )
-         fig2  =px.scatter(merged_dfram, 
-                         x='ar', 
-                         y='Index_Totalt',
-                         size_max=20,
-                         size='Index_Totalt',
-                         width=1000,
-                         #template='plotly_dark', 
-                         hover_name='Kommun', 
+         fig2  =px.bar(merged_dfram, 
+                         x='Index_Totalt', 
+                         y='Kommun',
+                         height=800,
+                         width=800,
+                         orientation='h',
                          color='Kommun',
+                         labels={'ar': 'År', 'Index_Totalt': 'Barn 1-5 år inskrivna i förskola, andel (%)'},
                          title='Barn 1-5 år inskrivna i förskola, andel (%)',
-                         log_x=True,
-                         range_x=[100,10000],
-                         range_y=[25,100],
+                         range_x=[10,100],
                          animation_frame='ar',
-                         animation_group='Kommun',
+                         color_continuous_scale='agsunset',
+                         text=merged_dfram['Index_Totalt'],
+                         
+                         
+                         
+                         #animation_group='Kommun',
                 )
          st.markdown("<h1 style='font-size:15px;'>Barn 1-5 år inskrivna i förskola, andel (%)", unsafe_allow_html=True)
+         
          fig.update_traces(textposition='bottom center', marker={"opacity":0.7})
-         fig2.update_traces(textposition='bottom center', marker={"opacity":0.7})
+         #fig2.update_traces(textposition='bottom center', marker={"opacity":0.7})
+         fig2.update_traces(textposition='outside')
+         fig2.update_layout(xaxis=dict(range=[all_min_value, all_max_value]))
+         fig2.update_layout(coloraxis_showscale=False)
          fig.update_layout(
             margin = dict(t=50, l=0, r=200, b=0),
-            showlegend=False,
+            showlegend=True,
+            
             xaxis_title='År',
             yaxis_title='Index(%)',
             #plot_bgcolor='black',  # Set background color
             
-            
-         
-        )
-         fig2.update_layout(
-            margin = dict(t=50, l=0, r=200, b=0),
-            showlegend=False,
-            xaxis_title='År',
-            yaxis_title='Index(%)',
-            #plot_bgcolor='black',  # Set background color
-            xaxis=dict(
-                title_font=dict(size=16),  # Adjust size as needed for x-axis title
-                tickfont=dict(size=12)  # Adjust size as needed for x-axis tick labels
-            ),
-                yaxis=dict(
-                title_font=dict(size=16),  # Adjust size as needed for y-axis title
-                tickfont=dict(size=12)  # Adjust size as needed for y-axis tick labels
-            )
             
          
         )
          st.plotly_chart(fig)
-         st.write(fig2)
-            
-        
-           
-       
-        
-       
-
-
-
-
-    
-        
-                      
-        
-    
-    
-
-
-
-# Create frames for animation
-
-    
-    
+         st.plotly_chart(fig2)
    
-
-
-# Update frames
-
-       
-        
-   
-   
-     
          """fig = px.sunburst(merged_df,
                        #x='ar', 
                        #y='Index_Totalt',

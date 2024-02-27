@@ -37,6 +37,8 @@ def show():
                                        x='ar', 
                                        y=['sarskiltboende_kvinnor', 'sarskiltboende_man', 'sarskiltboende_totalt'], 
                                        title='Brukarbedömning särskilt boende äldreomsorg-hänsyn till åsikter och önskemål, andel(%)',
+                                       markers=True,
+                                       width=800
                                        )
             st.plotly_chart(fig)
             output = BytesIO()

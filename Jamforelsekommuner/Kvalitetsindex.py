@@ -3,8 +3,13 @@ import plotly.express as px
 import requests
 import pandas as pd
 from io import BytesIO
+import numpy as np
 
+
+cached_data = {}
 def fetch_data(api_url):
+    if api_url in cached_data:
+        return cached_data[api_url]
     response = requests.get(api_url)
     if response.status_code == 200:
         data = response.json()
@@ -13,69 +18,48 @@ def fetch_data(api_url):
         st.error("Failed to fetch data from API")
         return None
     
-def merge_data(api1_url, api2_url,api3_url,api4_url,api5_url,api6_url):
-    data1 = fetch_data(api1_url)
-    data2 = fetch_data(api2_url)
-    data3 = fetch_data(api3_url)
-    data4 = fetch_data(api4_url)
-    data5 = fetch_data(api5_url)
-    data6 = fetch_data(api6_url)
-    df1 = pd.DataFrame(data1)
-    df2 = pd.DataFrame(data2)
-    df3 = pd.DataFrame(data3)
-    df4 = pd.DataFrame(data4)
-    df5 = pd.DataFrame(data5)
-    df6 = pd.DataFrame(data6)
-    #st.write('DataFrame 1:')
-    #st.write(df1)
-    #st.write('DataFrame 2:')
-    #st.write(df2)
-    df_ar1= pd.json_normalize(df1['data'])
-    df_ar2= pd.json_normalize(df2['data'])
-    df_ar3= pd.json_normalize(df3['data'])
-    df_ar4= pd.json_normalize(df4['data'])
-    df_ar5= pd.json_normalize(df5['data'])
-    df_ar6= pd.json_normalize(df6['data'])
-    #st.write(df_ar1)
-    #st.write(df_ar2)
-
-    # Convert data to Pandas DataFrames
-   
-
-    # Merge DataFrames (assuming there is a common key/column)
-    merged_df = pd.concat([df_ar1,df_ar2,df_ar3,df_ar4,df_ar5,df_ar6], ignore_index=True)
-
-    return merged_df
 
 def show():
-   api1_url = "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Falkenberg"
-   api2_url = "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Ljungby"
-   api3_url = "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Nynashamn"
-   api4_url = "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Vetlanda"
-   api5_url = "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_ornskoldsvik"
-   api6_url = "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Oskarshamn"
-   
-   merged_data = merge_data(api1_url, api2_url,api3_url,api4_url,api5_url,api6_url)
-   merged_data['KvalIndex'] = merged_data['KvalIndex'].round(0)
-
-   #st.dataframe(merged_data)
-   #x_id = [0,1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16]
-   #merged_data['x_id'] = x_id
-   #st.dataframe(merged_data)
-   #merged_data['x'] = merged_data['ar'].astype(str) + '_' + merged_data['x_id'].astype(str)
-   #st.dataframe(merged_data)
-   if merged_data is not None and len(merged_data) > 0:
-        # Fetch data
-        #data = fetch_data(api_url)
-        # Convert data to a Pandas DataFrame
+   api_urls =[ 
+   "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Falkenberg",
+   "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Ljungby",
+   "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Nynashamn",
+   "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Vetlanda",
+   "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_ornskoldsvik",
+   "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Oskarshamn"
+   ]
+   merged_data = []
+   for api_url in api_urls:
+        fetchdata = fetch_data(api_url)
+        df_ar1= pd.json_normalize(fetchdata['data'])
+        df_ar1['KvalIndex'] = df_ar1['KvalIndex'].round()
+        df_ar1['Change'] = df_ar1.groupby('Kommun')['KvalIndex'].diff().fillna(0)
+        #st.write(df_ar1)
+        """df_ar1['Percentage_Change'] = df_ar1['KvalIndex'].pct_change() * 100
+        df_ar1['Percentage_Change'].fillna(0, inplace=True)
+        st.write(df_ar1)
+        #sorted_df = merged_dfram.sort_values(by='Percentage_Change')
+        #min_change = df_ar1['Percentage_Change'].min()
+        df_ar1['Positive_Change'] = df_ar1['Percentage_Change'] - df_ar1['Percentage_Change'].min() + 1
+        max_change = df_ar1['Positive_Change'].max()
+        #epsilon = 1e-10
+        df_ar1['Scaled_Change'] = ((df_ar1['Positive_Change'] / max_change)) * 10
+        
+        st.write(df_ar1)
+        #df1 = pd.DataFrame(merged_data)"""
+        merged_data.append(df_ar1)
+        merged_dfram = pd.concat(merged_data, ignore_index=True)
+        #x_range = [max(merged_dfram['Scaled_Change'].min(), 0.1), min(merged_dfram['Scaled_Change'].max(),20)]  # Adjust the lower bound as needed
+        
+        st.write(merged_dfram)
        
-        
-        
-        fig = px.scatter(merged_data,
+   if merged_dfram is not None and len(merged_data) > 0:    
+    
+        fig = px.scatter(merged_dfram,
                        x='ar', 
                        y='KvalIndex',
                        #animation_frame='ar',
-                       width=1000,
+                       width=800,
                        #height=400,
                        color ='Kommun',
                        size_max=35,
@@ -83,40 +67,38 @@ def show():
                        #opacity=1.0,  # Adjust transparency
                        text='Kommun',
                        template='plotly_dark',
+                       #range_x=[10,100],
+                       range_y=[0,110],
                        title='Kvalitetsindex LSS, andel(%)',
                        labels={'KvalIndex': 'Kvalitetsindex(%)','Kommun': 'Kommun','ar': 'Year'},
                        
-                       
                        )
-        #col = st.color_picker('Select a plot color')
-        #fig.update_layout(showlegend=False)
-        fig.update_traces(textposition='bottom center', marker={"opacity":0.7})
-        #st.markdown("<h1 style='font-size:15px;'>Kvalitetsindex LSS, andel(%)", unsafe_allow_html=True)
-         
-        #fig.update_traces(marker=dict(color= col))
-        fig.update_layout(
-            margin = dict(t=50, l=0, r=200, b=0),
-            showlegend=False,
-            xaxis_title='Year',
-            yaxis_title='KvalIndex',
-            plot_bgcolor='black',  # Set background color
-            xaxis=dict(
-                title_font=dict(size=16),  # Adjust size as needed for x-axis title
-                tickfont=dict(size=12)  # Adjust size as needed for x-axis tick labels
-            ),
-                yaxis=dict(
-                title_font=dict(size=16),  # Adjust size as needed for y-axis title
-                tickfont=dict(size=12)  # Adjust size as needed for y-axis tick labels
-            )
-            
-         
-        )
+        fig2  =px.scatter(merged_dfram, 
+                         x='ar', 
+                         y='Change',
+                         size_max=20,
+                         size='KvalIndex',
+                         width=800,
+                         #template='plotly_dark', 
+                         hover_name='Kommun', 
+                         color='Kommun',
+                         #color_continuous_scale='RdBu',
+                         title='Barn 1-5 år inskrivna i förskola, andel (%)',
+                         log_x=True,
+                         #range_x=x_range,
+                         #range_y=[0,20],
+                         #animation_frame='ar',
+                         #animation_group='Percentage_Change',
+                         #showlegend=True,
+                )
+       
         st.plotly_chart(fig)
+        st.plotly_chart(fig2)
 
         output = BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            merged_data.to_excel(writer, sheet_name='Sheet1', index=False)
-        if not merged_data.empty:    
+            merged_dfram.to_excel(writer, sheet_name='Sheet1', index=False)
+        if not merged_dfram.empty:    
             st.download_button(label='Ladda ner excel', data=output, file_name='Kvalitetsindex LSS.xlsx', key='LSS')
         else:
             st.warning("No data to display.")

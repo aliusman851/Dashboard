@@ -37,6 +37,9 @@ def show():
                           x='ar', 
                           y='elev',  
                           title='Gymnasieelever med examen inom 3 år, kommunala skolor, andel(%), avvikelse från modellberäknat värde',
+                          markers=True,
+                          text='elev',
+                          width=800,
                           )
             
             st.plotly_chart(fig)

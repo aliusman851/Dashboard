@@ -37,6 +37,7 @@ def show():
                          x=['utbildade_kvinnor', 'utbildade_man', 'utbildade_totalt'], 
                          orientation='h',
                          title='Invånare 25-64 år med eftergymnasial utbildning, andel(%)',
+                         width=800,
                          )
             
             st.plotly_chart(fig)

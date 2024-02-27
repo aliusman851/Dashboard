@@ -29,16 +29,21 @@ def show():
    if api_url:
         # Fetch data
         df = fetch_data(api_url)
-        
+        df['text'] = df.apply(lambda row: f"Women: {row['behandlade_kvinnor']} | Man: {row['behandlade_man']} | Total: {row['behandlas_totalt']}", axis=1)
 
         if df is not None and len(df) > 0:
             # Convert data to a Pandas DataFrame
             
             fig = px.line(df, 
                           x='ar',
-                         y=['behandlade_kvinnor', 'behandlade_man', 'behandlas_totalt'], 
-                         title='Brukarbedömning hemtjänst äldreomsorg-bemötande, andel(%)',
+                          y=['behandlade_kvinnor', 'behandlade_man', 'behandlas_totalt'], 
+                          title='Brukarbedömning hemtjänst äldreomsorg-bemötande, andel(%)',
+                          markers=True,
+                          width=800
+                          
                          )
+            
+        
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:

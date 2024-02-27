@@ -38,10 +38,12 @@ def show():
                          x='ar',
                         title='Elever i åk 9 som är behöriga till yrkesprogram kommunala (modellberäknat värde), andel(%)',
                         template=("plotly_white"),
+                        width=700,
                         )
             fig.update_layout(
-                plot_bgcolor="rgba(2,0,1,4)",
-                xaxis=(dict(showgrid=False))
+                
+                #plot_bgcolor="rgba(2,0,1,4)",
+                xaxis=(dict(showgrid=False)),
             )
             st.plotly_chart(fig)
             output = BytesIO()

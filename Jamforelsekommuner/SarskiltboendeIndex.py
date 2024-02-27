@@ -55,8 +55,8 @@ def show():
                        height=800,
                        hover_name='Kommun',
                        #hover_data={'Index_Totalt': True},
-                       #template='plotly_dark',
-                       labels={'Index_Totalt': 'Hemtjänst/särskilt boende)Index(%)','id': 'Kommun/År', 'parent': 'År'},
+                       template='plotly_dark',
+                       labels={'Index_Totalt': 'Hemtjänst/särskilt boende)Index(%)','id': 'Kommun/År', 'ar': 'År'},
                       
                        
                        
@@ -64,7 +64,11 @@ def show():
       #fig.update_traces(hoverinfo='ar', selector=dict(type='sunburst', hoverinfo='ar'))
       #fig.update_traces(hovertemplate= 'Index_Totalt')
       st.markdown("<h1 style='font-size:15px;'>Brukarbedömning särskiltboende äldreomsorg-bemötande, förtroende,medelvärde — Kommuner,Index andel(%)", unsafe_allow_html=True)
-      fig.update_layout(margin = dict(t=0, l=0, r=750, b=0))
+      fig.update_layout( 
+          margin = dict(t=0, l=0, r=750, b=0),
+          
+          showlegend=True,
+        )
       st.plotly_chart(fig)
      
       output = BytesIO()

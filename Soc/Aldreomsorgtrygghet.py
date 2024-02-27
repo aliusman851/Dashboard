@@ -38,11 +38,12 @@ def show():
                 y= "ar" ,
                 title='Brukarbedömning hemtjänst äldreomsorg-trygghet, andel(%)',
                 orientation='h',
-                template=("plotly_white"),
+                #template=("plotly_white"),
+                width=800
             
             )
             fig.update_layout(
-                plot_bgcolor="rgba(0,0,0,4)",
+                
                 xaxis=(dict(showgrid=False))
                   )
             st.plotly_chart(fig)

@@ -51,6 +51,7 @@ def show():
                                     x='x', 
                                     y=selected_column,
                                     animation_frame='ar',
+                                    width=800,
                                     #color='selected_column',
                                     barmode='group',
                                     #range_y=[100, [selected_column]],
@@ -63,11 +64,14 @@ def show():
                                     x='ar', 
                                     y=selected_columns,
                                     color=selected_columns,
+                                    width=800,
                                     #animation_frame='x',
                                     #title='Ungdomar som är etablerade på arbetsmarknaden eller studerar 2 år efter slutförd gymnasieutbildning, kommunala skolor, andel(%)',
                                     )
             #fig.update_yaxes(range=[8, 0])
             #fig.update_layout(yaxis=dict(range=[0, 80]))
+            
+                
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
