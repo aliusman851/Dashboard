@@ -18,10 +18,10 @@ from Jamforelsekommuner.Kvalitetsindex import show as show_Kvalitetsindex
 from Jamforelsekommuner.SarskiltboendeIndex import show as show_SarskiltboendeIndex
 from Jamforelsekommuner.ForskolebarnIndex import show as show_ForskolebarnIndex
 from Jamforelsekommuner.Gymnasieelever import show as show_Gymnasieelever
-from Jamforelsekommuner.meritvardeavvikelse import show as show_meritvardeavvikelse
+from Jamforelsekommuner.Elevmeritavvikelse import show as show_Elevmeritavvikelse
 from Jamforelsekommuner.Yrkesprogrambehoriga import show as show_Yrkesprogrambehoriga
 from Jamforelsekommuner.Ekonomiskstandard import show as show_Ekonomiskstandard
-
+from Jamforelsekommuner.Avsaknadtillit import show as show_Avsaknadtillit
 
 st.set_page_config(page_title="Falkenberg Dashboard",
                    page_icon=":bar_chart:",
@@ -67,7 +67,7 @@ st.header('En sida med visualiseringar av data för olika områden')
 option_selected= False
 
 page_utbildning = {
-     "Välj":"",  
+    "Välj":"",  
     "Behorighet yrkesprogram": show_yrkesprogram,
     "Examinerade gymnasieelev": show_gymnasieelever,
     "Förskolebarn": show_forskolebarn,
@@ -94,9 +94,10 @@ page_socioekonomi = {
     "Hemtjänst/särskilt boende)Index":show_SarskiltboendeIndex,
     "Barn inskrivna i förskola":show_ForskolebarnIndex,
     "Gymnasieelever med examen inom 4 år":show_Gymnasieelever,
-    "Elever genomsnittligt meritvärde avvikelse":show_meritvardeavvikelse, 
+    "Elever genomsnittligt meritvärde avvikelse":show_Elevmeritavvikelse, 
     "Elever behöriga till yrkesprogram, hemkommun":show_Yrkesprogrambehoriga, 
-    "Invånare med låg ekonomisk standard(0-19år)":show_Ekonomiskstandard
+    "Invånare med låg ekonomisk standard(0-19år)":show_Ekonomiskstandard,
+    "Invånare 16-84 år med avsaknad av tillit till andra":show_Avsaknadtillit
 }
 st.sidebar.title("Navigation")
 navigation_utbildning = st.sidebar.selectbox('Utbildning', list(page_utbildning.keys()))

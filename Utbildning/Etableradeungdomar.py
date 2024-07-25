@@ -37,14 +37,8 @@ def show():
         #all_columns = df.columns
         selected_columns_all = ['Select all'] + selected_column
         selected_columns = st.selectbox('Select y-axis value', options=selected_columns_all)
-        #st.dataframe(df)
-        #x_id = [0,1, 2, 3, 4, 5, 6, 7, 8]
-        #df['x_id'] = x_id
-        #st.dataframe(df)
         df['x'] = df['ar'].astype(str) + '_' + df['id'].astype(str)
-        #st.dataframe(merged_data)
-        #selected_columns = selected_columns_all if selected_columns_all else [selected_column]
-        #y_axis_val = st.selectbox('Select y-axis value', options=selected_column) 
+        
         if df is not None and len(df) > 0:
             if selected_columns == 'Select all':
                 fig = px.bar(df,
@@ -53,7 +47,7 @@ def show():
                                     animation_frame='ar',
                                     width=800,
                                     #color='selected_column',
-                                    barmode='group',
+                                    #barmode='group',
                                     #range_y=[100, [selected_column]],
                                     template='plotly_dark',
                                     #color=selected_column,
@@ -68,10 +62,7 @@ def show():
                                     #animation_frame='x',
                                     #title='Ungdomar som är etablerade på arbetsmarknaden eller studerar 2 år efter slutförd gymnasieutbildning, kommunala skolor, andel(%)',
                                     )
-            #fig.update_yaxes(range=[8, 0])
-            #fig.update_layout(yaxis=dict(range=[0, 80]))
-            
-                
+           
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:

@@ -24,9 +24,9 @@ def show():
    "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Falkenberg",
    "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Ljungby",
    "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Nynashamn",
-   "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Vetlanda",
+   "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Oskarshamn",
    "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_ornskoldsvik",
-   "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Oskarshamn"
+   "https://nav.utvecklingfalkenberg.se/items/Kvalitetsindex_Vetlanda"
    ]
    merged_data = []
    for api_url in api_urls:
@@ -51,7 +51,7 @@ def show():
         merged_dfram = pd.concat(merged_data, ignore_index=True)
         #x_range = [max(merged_dfram['Scaled_Change'].min(), 0.1), min(merged_dfram['Scaled_Change'].max(),20)]  # Adjust the lower bound as needed
         
-        st.write(merged_dfram)
+        #st.write(merged_dfram)
        
    if merged_dfram is not None and len(merged_data) > 0:    
     
@@ -83,7 +83,7 @@ def show():
                          hover_name='Kommun', 
                          color='Kommun',
                          #color_continuous_scale='RdBu',
-                         title='Barn 1-5 år inskrivna i förskola, andel (%)',
+                         title='Kvalitetsindex LSS, andel(%)',
                          log_x=True,
                          #range_x=x_range,
                          #range_y=[0,20],

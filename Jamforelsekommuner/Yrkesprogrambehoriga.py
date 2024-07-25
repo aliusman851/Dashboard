@@ -22,13 +22,13 @@ def fetch_data(api_url):
 def show():
    api_urls = [
    "https://nav.utvecklingfalkenberg.se/items/Yrkesprogram_Aneby",
+   "https://nav.utvecklingfalkenberg.se/items/Yrkesprogram_Falkenberg",
+   "https://nav.utvecklingfalkenberg.se/items/Yrkesprogram_Laholm",
    "https://nav.utvecklingfalkenberg.se/items/Yrkesprogram_Ljungby",
    "https://nav.utvecklingfalkenberg.se/items/Yrkesprogram_Nynashamn",
-   "https://nav.utvecklingfalkenberg.se/items/Yrkesprogram_Vetlanda",
-   "https://nav.utvecklingfalkenberg.se/items/Yrkesprogram_Ornskoldsvik",
    "https://nav.utvecklingfalkenberg.se/items/Yrkesprogram_Oskarshamn",
-   "https://nav.utvecklingfalkenberg.se/items/Yrkesprogram_Falkenberg",
-   "https://nav.utvecklingfalkenberg.se/items/Yrkesprogram_Laholm"
+   "https://nav.utvecklingfalkenberg.se/items/Yrkesprogram_Ornskoldsvik",
+   "https://nav.utvecklingfalkenberg.se/items/Yrkesprogram_Vetlanda"
    ]
    merged_data = []
    for api_url in api_urls:
@@ -42,48 +42,53 @@ def show():
         merged_dfram['Value_K'] = merged_dfram['Value_K'].round(0)
         merged_dfram['Value_M'] = merged_dfram['Value_M'].round(0)
         merged_dfram['Value_T'] = merged_dfram['Value_T'].round(0)
-        #merged_df = merged_dfram.sort_values(by='ar')
-        #st.write(merged_dfram)
-   if merged_dfram is not None and len(merged_data) > 0:
-        #year_options = merged_dfram['ar'].unique().tolist()
-        #year = st.selectbox('select year', year_options,0)
-        #merged_dfram = merged_dfram[merged_dfram['ar']==year]
-         fig  =px.scatter(merged_dfram, 
-                         x='ar', 
-                         y='Index_Totalt',
-                         size_max=20,
-                         size='Index_Totalt',
-                         width=1000,
-                         template='plotly_dark', 
-                         hover_name='Kommun', 
-                         color='Kommun',
-                         log_x=True,
-                         #range_x=[100,10000],
-                         range_y=[30,100],
-                         
-                    )
-         st.markdown("<h1 style='font-size:15px;'>Barn 1-5 år inskrivna i förskola, andel (%)", unsafe_allow_html=True)
-         fig.update_traces(textposition='bottom center', marker={"opacity":0.7})    
-         fig.update_layout(
-            margin = dict(t=50, l=0, r=200, b=0),
-            showlegend=True,
-            xaxis_title='År',
-            yaxis_title='Index(%)',
-            #plot_bgcolor='black',  # Set background color
-         )
-         st.plotly_chart(fig)
-          
 
+   if merged_dfram is not None and len(merged_data) > 0:
+         selected_kommun = st.selectbox('Välj kommun', merged_dfram['Kommun'].unique())
+
+         # Update the bar chart based on selected Kommun
+         #st.title= 'Elever i åk 9 som är behöriga till yrkesprogram, hemkommun, andel (%)',
+         fig = update_bar_chart(selected_kommun, merged_dfram)
+
+         # Show figure
+         st.plotly_chart(fig)
          output = BytesIO()
          with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            merged_dfram.to_excel(writer, sheet_name='Sheet1', index=False)
+             merged_dfram.to_excel(writer, sheet_name='Sheet1', index=False)
          if not merged_dfram.empty:    
-            st.download_button(label='Ladda ner excel', data=output, file_name='ForsskolebarnIndex.xlsx', key='barn')
+            st.download_button(label='Ladda ner excel', data=output, file_name='yrkeprogram.xlsx', key='yrkepro')
          else:
             st.warning("No data to display.")
-   else:
-     st.warning("No data to display.")
+def update_bar_chart(selected_kommun,merged_data):
+    filtered_df = merged_data[merged_data['Kommun'] == selected_kommun]
     
+    fig = px.bar(filtered_df, 
+                 x='ar', 
+                 y=['Value_K','Value_M','Value_T'],
+                 #color='Kommun', 
+                 labels={'ar': 'År', 'Value': 'Värde andel(%)', 'Value_Type': 'Value Type'},
+                 barmode='group',  # Grouped bars
+                 template='plotly_dark',
+                 color_discrete_sequence=px.colors.qualitative.Pastel,  # Color palette
+                 width=800, height=600,  # Custom width and height
+                 category_orders={'ar': sorted(filtered_df['ar'].unique())})   # Dark theme for better contrast
+    
+    fig.update_layout(title=f'Elever i åk 9 som är behöriga till yrkesprogram, hemkommun, andel (%)',
+                      showlegend=True,
+                      xaxis_title='Year',
+                      yaxis_title='Value',
+                      bargap=0.2,  # Adjust gap between bars
+                      font=dict(family="Arial, sans-serif", size=12),  # Font style
+                      plot_bgcolor='rgba(0,0,0,0)',  # Background color
+                      paper_bgcolor='rgba(0,0,0,0)',  # Background color
+                      hovermode='x',  # Hover information
+                      
+                      hoverlabel=dict(bgcolor='white', font_size=12, font_family="Arial, sans-serif"))
+    
+    return fig      
+        
+    
+  
 
 if __name__ == "__main__":
     show()        

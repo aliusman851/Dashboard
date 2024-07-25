@@ -22,13 +22,15 @@ def fetch_data(api_url):
 def show():
    api_urls = [
    "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Aneby",
+   "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Falkenberg",
+   "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Laholm",
    "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Ljungby",
    "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Nynashamn",
-   "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Vetlanda",
-   "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Ornskoldsvik",
    "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Oskarshamn",
-   "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Falkenberg",
-   "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Laholm"
+   "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Ornskoldsvik",
+   "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Vetlanda"
+   
+   
    ]
    merged_data = []
    all_min_value=[]
@@ -44,6 +46,9 @@ def show():
         merged_data.append(df_ar1)
         merged_dfram = pd.concat(merged_data, ignore_index=True)
         merged_dfram['Index_Totalt'] = merged_dfram['Index_Totalt'].round(0)
+    
+   selected_kommuner = st.selectbox('Välj kommun(er)', merged_dfram['Kommun'].unique(),index=0)
+   filtered_data = merged_dfram[merged_dfram['Kommun'] == selected_kommuner]
         #merged_dfram['Total_percentage'] = 100
         #merged_dfram['percentage'] = (merged_dfram['Index_Totalt'] / merged_dfram['Total_percentage']) * 100
         #merged_df = merged_dfram.sort_values(by='ar')
@@ -51,19 +56,19 @@ def show():
         #st.write(min_value,max_value)
           
         
-   if merged_dfram is not None and len(merged_data) > 0:
+   if filtered_data is not None and len(filtered_data) > 0:
         #year_options = merged_dfram['ar'].unique().tolist()
         #year = st.selectbox('select year', year_options,0)
         #merged_dfram = merged_dfram[merged_dfram['ar']==year]
-         fig  =px.scatter(merged_dfram, 
+         fig  =px.bar(filtered_data, 
                          x='ar', 
                          y='Index_Totalt',
-                         size_max=20,
-                         size='Index_Totalt',
-                         width=1000,
+                         #size_max=20,
+                         #size='Index_Totalt',
+                         width=800,
                          template='plotly_dark', 
                          hover_name='Kommun', 
-                         color='Kommun',
+                         color='Index_Totalt',
                          log_x=True,
                          #range_x=[100,10000],
                          range_y=[30,100],
@@ -89,7 +94,7 @@ def show():
                 )
          st.markdown("<h1 style='font-size:15px;'>Barn 1-5 år inskrivna i förskola, andel (%)", unsafe_allow_html=True)
          
-         fig.update_traces(textposition='bottom center', marker={"opacity":0.7})
+         #fig.update_traces(textposition='bottom center', marker={"opacity":0.7})
          #fig2.update_traces(textposition='bottom center', marker={"opacity":0.7})
          fig2.update_traces(textposition='outside')
          fig2.update_layout(xaxis=dict(range=[all_min_value, all_max_value]))
@@ -107,30 +112,6 @@ def show():
         )
          st.plotly_chart(fig)
          st.plotly_chart(fig2)
-   
-         """fig = px.sunburst(merged_df,
-                       #x='ar', 
-                       #y='Index_Totalt',
-                       values='Index_Totalt',
-                       path= ['ar','Kommun','Index_Totalt'],
-                       color='Kommun',
-                       maxdepth=2,
-                       width=1500,
-                       height=800,
-                       hover_name='Kommun',
-                       #hover_data={'Index_Totalt': True},
-                       #template='plotly_dark',
-                       labels={'Index_Totalt': 'Hemtjänst/särskilt boende)Index(%)','id': 'Kommun/År', 'parent': 'År'},
-                      
-                       
-                       
-        )
-      #fig.update_traces(hoverinfo='ar', selector=dict(type='sunburst', hoverinfo='ar'))
-      #fig.update_traces(hovertemplate= 'Index_Totalt')
-      st.markdown("<h1 style='font-size:15px;'>Barn 1-5 år inskrivna i förskola, andel (%), förtroende,medelvärde — Kommuner,Index andel(%)", unsafe_allow_html=True)
-      fig.update_layout(margin = dict(t=0, l=0, r=750, b=0))
-      st.plotly_chart(fig)"""
-     
          output = BytesIO()
          with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
           merged_dfram.to_excel(writer, sheet_name='Sheet1', index=False)

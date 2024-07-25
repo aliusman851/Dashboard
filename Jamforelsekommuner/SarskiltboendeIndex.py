@@ -22,13 +22,15 @@ def fetch_data(api_url):
 def show():
    api_urls = [
    "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Aneby",
+   "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Falkenberg",
+   "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Laholm",
    "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Ljungby",
    "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Nynashamn",
-   "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Vetlanda",
-   "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Ornskoldsvik",
    "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Oskarshamn",
-   "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Falkenberg",
-   "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Laholm"
+   "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Ornskoldsvik",
+   "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Vetlanda"
+   
+   
    ]
    merged_data = []
    for api_url in api_urls:

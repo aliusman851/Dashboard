@@ -38,7 +38,7 @@ def show():
                 y= "ar" ,
                 title='Brukarbedömning hemtjänst äldreomsorg-trygghet, andel(%)',
                 orientation='h',
-                #template=("plotly_white"),
+                template=("plotly_white"),
                 width=800
             
             )
