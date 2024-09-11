@@ -30,16 +30,31 @@ def show():
    if api_url:
         # Fetch data
         df = fetch_data(api_url)
-
-        if df is not None and len(df)>0:
+        melted_data = df.melt(id_vars=['ar','kommun'], value_vars='elever',
+                                     var_name='Type', value_name='Value')
+        type_labels = {'elever': 'Elever'}
+        melted_data['Type'] = melted_data['Type'].map(type_labels)
+        #st.write(melted_data)
+        if melted_data is not None and len(melted_data)>0:
             
-            fig =px.histogram(df, 
-                         y='elever',
-                         x='ar',
+            fig =px.histogram(melted_data, 
+                        y='Value',
+                        x='ar',
                         title='Elever i åk 9 som är behöriga till yrkesprogram kommunala (modellberäknat värde), andel(%)',
                         template=("plotly_white"),
-                        width=700,
+                        labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
+                        #custom_data=['kommun','Type'],
+                        color='Type',
+                        width=700
                         )
+           
+            fig.update_traces(customdata=melted_data[['kommun', 'Type']].values)
+            fig.update_traces(hovertemplate="<br>".join([
+              "År: %{x}",
+              "Andel(%): %{y}",
+              "Kommun: %{customdata[0]}",
+              "Typ: %{customdata[1]}"
+            ])) 
             fig.update_layout(
                 
                 #plot_bgcolor="rgba(2,0,1,4)",
@@ -48,8 +63,8 @@ def show():
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                df.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Yrkesprogram.xlsx', key='Yrkesprogram')
+                melted_data.to_excel(writer, sheet_name='Sheet1', index=False)
+            st.download_button(label='Ladda ner excel', data=output, file_name='Behöriga till yrkesprogram kommunala.xlsx', key='Yrkesprogram')
             mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                  
         else:

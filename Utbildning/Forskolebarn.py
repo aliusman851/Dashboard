@@ -30,23 +30,36 @@ def show():
     if api_url:
         # Fetch data
         df = fetch_data(api_url)
+        melted_data = df.melt(id_vars=['ar','kommun'], value_vars='barn',
+                                     var_name='Type', value_name='Value')
+        type_labels = {'barn': 'Förskolebarn'}
+        melted_data['Type'] = melted_data['Type'].map(type_labels)
 
-        if df is not None and len(df) > 0:
+        if melted_data is not None and len(melted_data) > 0:
             
-            fig = px.line(df, 
+            fig = px.line(melted_data, 
                           x='ar', 
-                          y='barn',
+                          y='Value',
                          title='Barn i kommunala förskola, andel(%) av inskrivna barn',
                          markers=True,
-                         text='barn',
+                         text='Value',
+                         labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
+                         custom_data=['kommun','Type'],
+                         color='Type',
                          width=800
                          )
+            fig.update_traces(hovertemplate="<br>".join([
+              "År: %{x}",
+              "Andel(%): %{y}",
+              "Kommun: %{customdata[0]}",
+              "Typ: %{customdata[1]}"
+            ])) 
             
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 df.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='FÖrskolebarn.xlsx', key='Forskolebarn')
+            st.download_button(label='Ladda ner excel', data=output, file_name='Barn i kommunala förskola.xlsx', key='Forskolebarn')
            
 
         else:

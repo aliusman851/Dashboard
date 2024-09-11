@@ -30,23 +30,37 @@ def show():
     if api_url:
         # Fetch data
         df = fetch_data(api_url)
+        melted_data = df.melt(id_vars=['ar','kommun'], value_vars='elev',
+                                     var_name='Type', value_name='Value')
+        type_labels = {'elev': 'Elever'}
+        melted_data['Type'] = melted_data['Type'].map(type_labels)
 
-        if df is not None and len(df) > 0:
+        if melted_data is not None and len(melted_data) > 0:
             
-            fig = px.line(df, 
+            fig = px.line(melted_data, 
                           x='ar', 
-                          y='elev',  
+                          y='Value',  
                           title='Gymnasieelever med examen inom 3 år, kommunala skolor, andel(%), avvikelse från modellberäknat värde',
                           markers=True,
-                          text='elev',
-                          width=800,
+                          template=("plotly_white"),
+                          labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
+                          custom_data=['kommun','Type'],
+                          color='Type',
+                          width=700,
+                          text='Value'
+                          
                           )
-            
+            fig.update_traces(hovertemplate="<br>".join([
+              "År: %{x}",
+              "Andel(%): %{y}",
+              "Kommun: %{customdata[0]}",
+              "Typ: %{customdata[1]}"
+            ])) 
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                df.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Gymnasieelever.xlsx', key='Gymnasieelever')
+                melted_data.to_excel(writer, sheet_name='Sheet1', index=False)
+            st.download_button(label='Ladda ner excel', data=output, file_name='Gymnasieelever med examen inom 3 år.xlsx', key='Gymnasieelever')
            
         else:
             st.warning("No data to display.")
