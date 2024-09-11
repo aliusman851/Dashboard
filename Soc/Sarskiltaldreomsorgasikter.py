@@ -30,21 +30,35 @@ def show():
    if api_url:
         # Fetch data
         df = fetch_data(api_url)
+        melted_data = df.melt(id_vars=['ar','kommun'], value_vars=['sarskiltboende_totalt', 'sarskiltboende_man', 'sarskiltboende_kvinnor'],
+                                     var_name='Type', value_name='Value')
+        type_labels = {'sarskiltboende_totalt': 'Totalt', 'sarskiltboende_man': 'Män', 'sarskiltboende_kvinnor': 'kvinnor'}
+        melted_data['Type'] = melted_data['Type'].map(type_labels) 
 
-        if df is not None and len(df) > 0:
+        if melted_data is not None and len(melted_data) > 0:
             
-            fig = px._chart_types.line(df, 
+            fig = px._chart_types.line(melted_data, 
                                        x='ar', 
-                                       y=['sarskiltboende_kvinnor', 'sarskiltboende_man', 'sarskiltboende_totalt'], 
+                                       y='Value', 
                                        title='Brukarbedömning särskilt boende äldreomsorg-hänsyn till åsikter och önskemål, andel(%)',
                                        markers=True,
-                                       width=800
+                                       template=("plotly_white"),
+                                       labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
+                                       width=800,
+                                       custom_data=['kommun','Type'],
+                                       color='Type'
                                        )
+            fig.update_traces(hovertemplate="<br>".join([
+              "År: %{y}",
+              "Andel(%): %{x}",
+              "Kommun: %{customdata[0]}",
+              "Typ: %{customdata[1]}"
+            ])) 
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                df.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Aldreomsorgbehandling.xlsx', key='sarskiltasikter')
+                melted_data.to_excel(writer, sheet_name='Sheet1', index=False)
+            st.download_button(label='Ladda ner excel', data=output, file_name='Särskilt boende äldreomsorg-hänsyn till åsikter.xlsx', key='sarskiltasikter')
                  
         else:
             st.warning("No data to display.")

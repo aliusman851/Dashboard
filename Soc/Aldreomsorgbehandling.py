@@ -29,26 +29,38 @@ def show():
    if api_url:
         # Fetch data
         df = fetch_data(api_url)
-        df['text'] = df.apply(lambda row: f"Women: {row['behandlade_kvinnor']} | Man: {row['behandlade_man']} | Total: {row['behandlas_totalt']}", axis=1)
+        melted_data = df.melt(id_vars=['ar','kommun'], value_vars=['behandlas_totalt', 'behandlade_man', 'behandlade_kvinnor'],
+                                     var_name='Type', value_name='Value')
+        type_labels = {'behandlas_totalt': 'Totalt', 'behandlade_man': 'Män', 'behandlade_kvinnor': 'kvinnor'}
+        melted_data['Type'] = melted_data['Type'].map(type_labels) 
+        #df['text'] = df.apply(lambda row: f"Women: {row['behandlade_kvinnor']} | Man: {row['behandlade_man']} | Total: {row['behandlas_totalt']}", axis=1)
 
-        if df is not None and len(df) > 0:
+        if melted_data is not None and len(melted_data) > 0:
             # Convert data to a Pandas DataFrame
             
-            fig = px.line(df, 
+            fig = px.line(melted_data, 
                           x='ar',
-                          y=['behandlade_kvinnor', 'behandlade_man', 'behandlas_totalt'], 
+                          y='Value', 
                           title='Brukarbedömning hemtjänst äldreomsorg-bemötande, andel(%)',
                           markers=True,
-                          width=800
+                          width=800,
+                          labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
+                          template='plotly_white',
+                          custom_data=['kommun','Type'],
+                          color='Type'
                           
                          )
-            
-        
+            fig.update_traces(hovertemplate="<br>".join([
+              "År: %{x}",
+              "Andel(%): %{y}",
+              "Kommun: %{customdata[0]}",
+              "Typ: %{customdata[1]}"
+            ])) 
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                df.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Aldreomsorgbehandling.xlsx', key='safty')
+                melted_data.to_excel(writer, sheet_name='Sheet1', index=False)
+            st.download_button(label='Ladda ner excel', data=output, file_name='Hemtjänst äldreomsorg-bemötande.xlsx', key='safty')
                  
         else:
             st.warning("No data to display.")

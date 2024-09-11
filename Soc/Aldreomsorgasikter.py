@@ -31,23 +31,38 @@ def show():
    if api_url:
         # Fetch data
         df = fetch_data(api_url)
+        #st.write(df)
+        melted_data = df.melt(id_vars=['ar','kommun'], value_vars=['hemtjanstasikter_totalt', 'hemtjanstasikter_man', 'hemtjanstasikter_kvinnor'],
+                                     var_name='Type', value_name='Value')
+        type_labels = {'hemtjanstasikter_totalt': 'Totalt', 'hemtjanstasikter_man': 'Män', 'hemtjanstasikter_kvinnor': 'kvinnor'}
+        melted_data['Type'] = melted_data['Type'].map(type_labels) 
 
-        if df is not None and len(df) > 0:
+        if melted_data is not None and len(melted_data) > 0:
             # Convert data to a Pandas DataFrame
             
-            fig = px.line(df,
+            fig = px.line(melted_data,
                            x='ar', 
-                           y=['hemtjanstasikter_kvinnor', 'hemtjanstasikter_man', 'hemtjanstasikter_totalt'], 
+                           y='Value',
+                           color='Type', 
                            title='Brukarbedömning hemtjänst äldreomsorg-hänsyn till åsikter och önskemål, andel(%)',
                            #color="Scenario",
                            markers=True,
                            width=800,
+                           custom_data=['kommun','Type'],
+                           labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
                            )
+            
+            fig.update_traces(hovertemplate="<br>".join([
+              "År: %{x}",
+              "Andel(%): %{y}",
+              "Kommun: %{customdata[0]}",
+              "Typ: %{customdata[1]}"
+            ]))
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                df.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Aldreomsorgbehandling.xlsx', key='asikter')
+                melted_data.to_excel(writer, sheet_name='Sheet1', index=False)
+            st.download_button(label='Ladda ner excel', data=output, file_name='Äldreomsorg-hänsyn till åsikter.xlsx', key='asikter')
                  
         else:
             st.warning("No data to display.")
