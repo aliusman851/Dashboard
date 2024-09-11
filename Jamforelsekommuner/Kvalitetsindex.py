@@ -33,72 +33,43 @@ def show():
         fetchdata = fetch_data(api_url)
         df_ar1= pd.json_normalize(fetchdata['data'])
         df_ar1['KvalIndex'] = df_ar1['KvalIndex'].round()
-        df_ar1['Change'] = df_ar1.groupby('Kommun')['KvalIndex'].diff().fillna(0)
-        #st.write(df_ar1)
-        """df_ar1['Percentage_Change'] = df_ar1['KvalIndex'].pct_change() * 100
-        df_ar1['Percentage_Change'].fillna(0, inplace=True)
-        st.write(df_ar1)
-        #sorted_df = merged_dfram.sort_values(by='Percentage_Change')
-        #min_change = df_ar1['Percentage_Change'].min()
-        df_ar1['Positive_Change'] = df_ar1['Percentage_Change'] - df_ar1['Percentage_Change'].min() + 1
-        max_change = df_ar1['Positive_Change'].max()
-        #epsilon = 1e-10
-        df_ar1['Scaled_Change'] = ((df_ar1['Positive_Change'] / max_change)) * 10
-        
-        st.write(df_ar1)
-        #df1 = pd.DataFrame(merged_data)"""
         merged_data.append(df_ar1)
         merged_dfram = pd.concat(merged_data, ignore_index=True)
         #x_range = [max(merged_dfram['Scaled_Change'].min(), 0.1), min(merged_dfram['Scaled_Change'].max(),20)]  # Adjust the lower bound as needed
         
         #st.write(merged_dfram)
-       
-   if merged_dfram is not None and len(merged_data) > 0:    
+   selected_kommuner = st.multiselect('Välj kommun(er)', merged_dfram['Kommun'].unique(),default=merged_dfram['Kommun'].unique()[0])
+   filtered_data = merged_dfram[merged_dfram['Kommun'].isin(selected_kommuner)]
+   #st.write(filtered_data)
+     
+   if filtered_data is not None and len(filtered_data) > 0:    
     
-        fig = px.scatter(merged_dfram,
+        fig = px.scatter(filtered_data,
                        x='ar', 
                        y='KvalIndex',
-                       #animation_frame='ar',
                        width=800,
                        #height=400,
                        color ='Kommun',
                        size_max=35,
                        size='KvalIndex',  # Marker size based on 'KvalIndex' values
                        #opacity=1.0,  # Adjust transparency
-                       text='Kommun',
+                       text='KvalIndex',
                        template='plotly_dark',
                        #range_x=[10,100],
                        range_y=[0,110],
                        title='Kvalitetsindex LSS, andel(%)',
-                       labels={'KvalIndex': 'Kvalitetsindex(%)','Kommun': 'Kommun','ar': 'Year'},
+                       labels={'KvalIndex': 'Kvalitetsindex(%)','Kommun': 'Kommun','ar': 'År'},
                        
                        )
-        fig2  =px.scatter(merged_dfram, 
-                         x='ar', 
-                         y='Change',
-                         size_max=20,
-                         size='KvalIndex',
-                         width=800,
-                         #template='plotly_dark', 
-                         hover_name='Kommun', 
-                         color='Kommun',
-                         #color_continuous_scale='RdBu',
-                         title='Kvalitetsindex LSS, andel(%)',
-                         log_x=True,
-                         #range_x=x_range,
-                         #range_y=[0,20],
-                         #animation_frame='ar',
-                         #animation_group='Percentage_Change',
-                         #showlegend=True,
-                )
-       
+        
+        
         st.plotly_chart(fig)
-        st.plotly_chart(fig2)
+        #st.plotly_chart(fig2)
 
         output = BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            merged_dfram.to_excel(writer, sheet_name='Sheet1', index=False)
-        if not merged_dfram.empty:    
+            filtered_data.to_excel(writer, sheet_name='Sheet1', index=False)
+        if not filtered_data.empty:    
             st.download_button(label='Ladda ner excel', data=output, file_name='Kvalitetsindex LSS.xlsx', key='LSS')
         else:
             st.warning("No data to display.")

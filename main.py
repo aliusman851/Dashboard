@@ -22,6 +22,10 @@ from Jamforelsekommuner.Elevmeritavvikelse import show as show_Elevmeritavvikels
 from Jamforelsekommuner.Yrkesprogrambehoriga import show as show_Yrkesprogrambehoriga
 from Jamforelsekommuner.Ekonomiskstandard import show as show_Ekonomiskstandard
 from Jamforelsekommuner.Avsaknadtillit import show as show_Avsaknadtillit
+from Jamforelsekommuner.Skoltrygghet import show as show_Skoltrygghet
+from Jamforelsekommuner.Trangboddhet import show as show_Trangboddhet
+from Jamforelsekommuner.Deltagartillfallen import show as show_Deltagartillfallen
+from Jamforelsekommuner.InvanareArbstud import show as show_InvanareArbstud
 
 st.set_page_config(page_title="Falkenberg Dashboard",
                    page_icon=":bar_chart:",
@@ -97,7 +101,11 @@ page_socioekonomi = {
     "Elever genomsnittligt meritvärde avvikelse":show_Elevmeritavvikelse, 
     "Elever behöriga till yrkesprogram, hemkommun":show_Yrkesprogrambehoriga, 
     "Invånare med låg ekonomisk standard(0-19år)":show_Ekonomiskstandard,
-    "Invånare 16-84 år med avsaknad av tillit till andra":show_Avsaknadtillit
+    "Invånare 16-84 år med avsaknad av tillit till andra":show_Avsaknadtillit, 
+    "Känner du dig trygg i skolan":show_Skoltrygghet,
+    "Trångboddhet i flerbostadshus":show_Trangboddhet,
+    "Deltagartillfällen i idrottsföreningar":show_Deltagartillfallen,
+    "Invånare 16-24 år som varken arbetar eller studerar":show_InvanareArbstud
 }
 st.sidebar.title("Navigation")
 navigation_utbildning = st.sidebar.selectbox('Utbildning', list(page_utbildning.keys()))
@@ -150,12 +158,13 @@ if not option_selected:
           """   
          st.write(html_code_col1, unsafe_allow_html=True)
     with col2:
-        html_code_col2 = f"""
-        <div id="moving-image-col2" style="position: absolute; top: 50%; left: 150%;  transform: translateX(-50%); ">
-            <img src="data:image/png;base64,{img3}" style="width: 500px; height: 400px;">
+         html_code_col2 = f"""
+        <div id="moving-image-col2" style="position: absolute; top: 50%; left: 50%;  transform: translateX(-50%,-50%); ">
+            <img src="data:image/png;base64,{img3}" style="width: auto; height: auto; max-width: 450px; max-height: 400px; ">
+            
             
          </div>
-         <style>
+         <<style>
              @keyframes moveContinuouslycoltwo {{
                 0% {{ transform: translateX(-50%); }}
                 50% {{ transform: translateX(-55%); }}
@@ -166,7 +175,8 @@ if not option_selected:
               }}
          </style>
           """     
-        st.write(html_code_col2, unsafe_allow_html=True)
+         st.write(html_code_col2, unsafe_allow_html=True)     
+   
 
 
 

@@ -21,8 +21,8 @@ def fetch_data(api_url):
     
 def show():
    api_urls = [
+   "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Falkenberg",    
    "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Aneby",
-   "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Falkenberg",
    "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Laholm",
    "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Ljungby",
    "https://nav.utvecklingfalkenberg.se/items/Forskolebarn_Nynashamn",
@@ -47,8 +47,10 @@ def show():
         merged_dfram = pd.concat(merged_data, ignore_index=True)
         merged_dfram['Index_Totalt'] = merged_dfram['Index_Totalt'].round(0)
     
-   selected_kommuner = st.selectbox('Välj kommun(er)', merged_dfram['Kommun'].unique(),index=0)
-   filtered_data = merged_dfram[merged_dfram['Kommun'] == selected_kommuner]
+   """selected_kommuner = st.selectbox('Välj kommun(er)', merged_dfram['Kommun'].unique(),index=0)
+   filtered_data = merged_dfram[merged_dfram['Kommun'] == selected_kommuner]"""
+   selected_kommuner = st.multiselect('Välj kommun(er)', merged_dfram['Kommun'].unique(),default=merged_dfram['Kommun'].unique()[0])
+   filtered_data = merged_dfram[merged_dfram['Kommun'].isin(selected_kommuner)]
         #merged_dfram['Total_percentage'] = 100
         #merged_dfram['percentage'] = (merged_dfram['Index_Totalt'] / merged_dfram['Total_percentage']) * 100
         #merged_df = merged_dfram.sort_values(by='ar')
@@ -57,21 +59,25 @@ def show():
           
         
    if filtered_data is not None and len(filtered_data) > 0:
-        #year_options = merged_dfram['ar'].unique().tolist()
-        #year = st.selectbox('select year', year_options,0)
-        #merged_dfram = merged_dfram[merged_dfram['ar']==year]
+        
+         #year_options = merged_dfram['ar'].unique().tolist()
+         #year = st.selectbox('select year', year_options,0)
+         #merged_dfram = merged_dfram[merged_dfram['ar']==year]
          fig  =px.bar(filtered_data, 
                          x='ar', 
                          y='Index_Totalt',
+                         color='Kommun',
                          #size_max=20,
                          #size='Index_Totalt',
+                         barmode='group',
                          width=800,
                          template='plotly_dark', 
                          hover_name='Kommun', 
-                         color='Index_Totalt',
+                         #color='Index_Totalt',
                          log_x=True,
                          #range_x=[100,10000],
                          range_y=[30,100],
+                         custom_data=['Kommun']
                          
                 )
          fig2  =px.bar(merged_dfram, 
@@ -102,7 +108,6 @@ def show():
          fig.update_layout(
             margin = dict(t=50, l=0, r=200, b=0),
             showlegend=True,
-            
             xaxis_title='År',
             yaxis_title='Index(%)',
             #plot_bgcolor='black',  # Set background color
@@ -110,12 +115,18 @@ def show():
             
          
         )
+         fig.update_traces(hovertemplate="<br>".join([
+          "År: %{x}",
+          "Andel(%): %{y}",
+          "Kommun: %{customdata[0]}",
+          
+        ]))
          st.plotly_chart(fig)
          st.plotly_chart(fig2)
          output = BytesIO()
          with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-          merged_dfram.to_excel(writer, sheet_name='Sheet1', index=False)
-         if not merged_dfram.empty:    
+           filtered_data.to_excel(writer, sheet_name='Sheet1', index=False)
+         if not filtered_data.empty:    
             st.download_button(label='Ladda ner excel', data=output, file_name='ForsskolebarnIndex.xlsx', key='barn')
          else:
             st.warning("No data to display.")

@@ -3,6 +3,7 @@ import plotly.express as px
 import requests
 import pandas as pd
 from io import BytesIO
+import pyarrow as pa
 
 
 
@@ -21,8 +22,8 @@ def fetch_data(api_url):
     
 def show():
    api_urls = [
+   "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Falkenberg",    
    "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Aneby",
-   "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Falkenberg",
    "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Laholm",
    "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Ljungby",
    "https://nav.utvecklingfalkenberg.se/items/Sarskiltboende_Nynashamn",
@@ -41,45 +42,60 @@ def show():
         
         merged_data.append(df_ar1)
         merged_df = pd.concat(merged_data, ignore_index=True)
-        merged_df['Index_Totalt'] = merged_df['Index_Totalt'].round()
-        #st.write(merged_df)
-   
-   if merged_data is not None and len(merged_data) > 0:
+        merged_df['Index_Totalt'] = pd.to_numeric(merged_df['Index_Totalt'], errors='coerce').round(0)
+        merged_df['datum'] = pd.to_datetime(merged_df['datum'], errors='coerce')
+        merged_df.dropna(subset=['Index_Totalt', 'datum','id'], inplace=True)
+
+   if merged_df is not None and len(merged_df) > 0:
      
       fig = px.sunburst(merged_df,
-                       #x='ar', 
-                       #y='Index_Totalt',
                        values='Index_Totalt',
                        path= ['ar','Kommun','Index_Totalt'],
                        color='Kommun',
                        maxdepth=2,
-                       width=1500,
+                       width=1700,
                        height=800,
                        hover_name='Kommun',
-                       #hover_data={'Index_Totalt': True},
-                       template='plotly_dark',
+                       hover_data={'ar':'År', 'ar': True},
+                       #template='plotly_dark',
                        labels={'Index_Totalt': 'Hemtjänst/särskilt boende)Index(%)','id': 'Kommun/År', 'ar': 'År'},
+                       branchvalues='total',  # Shows how much of the parent sector is contributed by the children
+                       #color_discrete_sequence=px.colors.qualitative.Pastel1
                       
                        
                        
         )
-      #fig.update_traces(hoverinfo='ar', selector=dict(type='sunburst', hoverinfo='ar'))
-      #fig.update_traces(hovertemplate= 'Index_Totalt')
-      st.markdown("<h1 style='font-size:15px;'>Brukarbedömning särskiltboende äldreomsorg-bemötande, förtroende,medelvärde — Kommuner,Index andel(%)", unsafe_allow_html=True)
+      fig.update_traces(hoverinfo='ar', selector=dict(type='sunburst', hoverinfo='ar'))
+      fig.update_traces(hovertemplate= 'Index_Totalt')
+      #st.markdown("<h1 style='font-size:15px;'>Brukarbedömning särskiltboende äldreomsorg-bemötande, förtroende,medelvärde — Kommuner,Index andel(%)", unsafe_allow_html=True)
       fig.update_layout( 
-          margin = dict(t=0, l=0, r=750, b=0),
+          #margin = dict(t=0, l=0, r=50, b=0),
+          title={
+               'text': "Brukarbedömning särskiltboende äldreomsorg-bemötande, förtroende,medelvärde — Kommuner,Index andel(%)",
+               'y':0.95,
+               'x':0.5,
+               'xanchor': 'center',
+               'yanchor': 'top'
+            },
+            font=dict(
+            size=14,
+        ),
+        margin=dict(t=50, l=25, r=25, b=25),
           
-          showlegend=True,
+        showlegend=True,
         )
-      st.plotly_chart(fig)
+      #fig.update_traces(textinfo='label+percent entry')
+      fig.update_traces(hovertemplate='<b>%{label}</b><br>År: %{customdata[0]}<br>Index(%): %{value:.2f}')
+      st.write(fig)
      
       output = BytesIO()
       with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        merged_df.to_excel(writer, sheet_name='Sheet1', index=False)
-        if not merged_df.empty:    
-            st.download_button(label='Ladda ner excel', data=output, file_name='Boendeindex.xlsx', key='boende')
-        else:
-            st.warning("No data to display.")
+           merged_df.to_excel(writer, sheet_name='Sheet1', index=False)
+
+      if not merged_df.empty:    
+           st.download_button(label='Ladda ner excel', data=output, file_name='Hemtjänst/särskilt boende.xlsx', key='boende')
+      else:
+           st.warning("No data to display.")
    else:
     st.warning("No data to display.")
     

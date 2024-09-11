@@ -21,8 +21,8 @@ def fetch_data(api_url):
     
 def show():
    api_urls = [
+   "https://nav.utvecklingfalkenberg.se/items/Tillitslos_Falkenberg",    
    "https://nav.utvecklingfalkenberg.se/items/Tillitslos_Aneby",
-   "https://nav.utvecklingfalkenberg.se/items/Tillitslos_Falkenberg",
    "https://nav.utvecklingfalkenberg.se/items/Tillitslos_Laholm",
    "https://nav.utvecklingfalkenberg.se/items/Tillitslos_Ljungby",
    "https://nav.utvecklingfalkenberg.se/items/Tillitslos_Nynashamn",
@@ -41,9 +41,14 @@ def show():
         merged_dfram['Value_K'] = pd.to_numeric(merged_dfram['Value_K'], errors='coerce').round(0)
         merged_dfram['Value_M'] = pd.to_numeric(merged_dfram['Value_M'], errors='coerce').round(0)
         merged_dfram['Value_T'] = pd.to_numeric(merged_dfram['Value_T'], errors='coerce').round(0)
-       
-   selected_kommuner = st.selectbox('Välj kommun(er)', merged_dfram['Kommun'].unique(),index=0)
-   filtered_data = merged_dfram[merged_dfram['Kommun'] == selected_kommuner]
+   check_data = merged_dfram.melt(id_vars=['ar', 'Kommun'], value_vars=['Value_T', 'Value_M', 'Value_K'], var_name='Type', value_name='Value')     
+   type_labels = {'Value_K': 'Kvinnor', 'Value_M': 'Män', 'Value_T': 'Totalt(Kvinnor och män)'}
+   check_data['Type'] = check_data['Type'].map(type_labels)      
+   selected_kommuner = st.multiselect('Välj kommun(er)', check_data['Kommun'].unique(),default=check_data['Kommun'].unique()[0])
+   filtered_data = check_data[check_data['Kommun'].isin(selected_kommuner)]
+      
+   #selected_kommuner = st.selectbox('Välj kommun(er)', merged_dfram['Kommun'].unique(),index=0)
+   #filtered_data = merged_dfram[merged_dfram['Kommun'] == selected_kommuner]
    #numeric_columns = filtered_data.select_dtypes(include='number')
    #st.write(numeric_columns)
    
@@ -52,13 +57,15 @@ def show():
         #numeric_columns = merged_dfram.select_dtypes(include='number')
         fig = px.line(filtered_data, 
                   x='ar', 
-                  y=['Value_K', 'Value_M', 'Value_T'], 
+                  y='Value',
+                  color='Type',
                   #color=['Value_K', 'Value_M', 'Value_T'],
                   hover_data={'Kommun': True} ,  # Include additional hover data 
                   markers=True, 
                   width=800,
+                  #range_y=[10,40],
                   title='Invånare 16-84 år med avsaknad av tillit till andra, andel (%) ',
-                  labels={'ar': 'År', 'value': 'Värde Andel(%)'},
+                  labels={'ar': 'År', 'Value': 'Andel(%)','Type':'typ'},
                   template='plotly_white'
                     )  # You can change the template if you want a different background color
 
@@ -68,9 +75,9 @@ def show():
 
         output = BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            merged_dfram.to_excel(writer, sheet_name='Sheet1', index=False)
-        if not merged_dfram.empty:    
-           st.download_button(label='Ladda ner excel', data=output, file_name='Tillitlos.xlsx', key='Tillit')
+            filtered_data.to_excel(writer, sheet_name='Sheet1', index=False)
+        if not filtered_data.empty:    
+           st.download_button(label='Ladda ner excel', data=output, file_name='Tillitlös.xlsx', key='Tillit')
         else:
             st.warning("No data to display.")
    else:

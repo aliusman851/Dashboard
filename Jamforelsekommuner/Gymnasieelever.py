@@ -21,8 +21,8 @@ def fetch_data(api_url):
     
 def show():
    api_urls = [
-   "https://nav.utvecklingfalkenberg.se/items/Gymnaiseelever_Aneby",
    "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Falkenberg",
+   "https://nav.utvecklingfalkenberg.se/items/Gymnaiseelever_Aneby",
    "https://nav.utvecklingfalkenberg.se/items/Gymnasielever_Laholm",
    "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Ljungby",
    "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Nynashamn",
@@ -44,33 +44,55 @@ def show():
         merged_dfram['Gymnasieelever_K'] = merged_dfram['Gymnasieelever_K'].round(0)
         merged_dfram['Gymnasieelever_T'] = merged_dfram['Gymnasieelever_T'].round(0)
       
-   
-   selected_kommuner = st.selectbox('Välj kommun(er)', merged_dfram['kommun'].unique(),index=0)
-   filtered_data = merged_dfram[merged_dfram['kommun'] == selected_kommuner]
+   selected_kommuner = st.multiselect('Välj kommun(er)', merged_dfram['kommun'].unique(),default=merged_dfram['kommun'].unique()[0])
+   filtered_data = merged_dfram[merged_dfram['kommun'].isin(selected_kommuner)]
+  
    
    if filtered_data is not None and not filtered_data.empty:
-    
-       fig = px.line(filtered_data, 
-                  x='ar', 
-                  y=['Gymnasieelever_K', 'Gymnasieelever_M', 'Gymnasieelever_T'], 
-                  #color='kommun', 
-                  markers=True, 
-                  width=800,
-                  title='Gymnasieelever med examen inom 4 år, hemkommun, andel (%)',
-                  labels={'ar': 'År', 'value': 'Andel(%)', 'kommun': 'Kommun'},
-                  template='plotly_white'
-                      )  # You can change the template if you want a different background color
+       melted_data = filtered_data.melt(id_vars=['ar','kommun'], value_vars=['Gymnasieelever_T', 'Gymnasieelever_M', 'Gymnasieelever_K'],
+                                     var_name='Type', value_name='Value')
 
-        # Show the plot in Streamlit
-       st.plotly_chart(fig)
-    
-         
+        # Map column names to more readable labels
+       type_labels = {'Gymnasieelever_T': 'Totalt(kvinnor och män)', 'Gymnasieelever_M': 'Män', 'Gymnasieelever_K': 'Kvinnor'}
+       melted_data['Type'] = melted_data['Type'].map(type_labels)
+       #st.write(melted_data)
+    # Create Line Chart
+       line_fig = px.line(
+             melted_data,
+             x='ar',
+             y='Value',
+             #range_y=[0,100],
+             range_x=[2014,2024],
+             color='kommun',
+             line_dash='Type',
+             title='Gymnasieelever med examen inom 4 år',
+             labels={'ar': 'År', 'Value': 'Andel (%)', 'kommun': 'Kommun','Tyep':'typ'}
+        )
+       line_fig.update_layout(
+               title_font_size=20,  # Increase title font size
+               #title_x=0.5,  # Center the title
+               xaxis_title_font_size=14,  # Font size for X-axis title
+               #yaxis_title_font_size=14,  # Font size for Y-axis title
+               legend_title_font_size=14,  # Font size for legend title
+               legend_font_size=12,  # Font size for legend items
+               xaxis_tickangle=-45,  # Angle X-axis ticks for better readability
+               #yaxis_tickformat='.1%',  # Format Y-axis ticks as percentages
+               hovermode='x unified'  # Unified hover mode for better comparison
+        )
+       line_fig.update_traces(
+           mode='lines+markers',  # Display lines with markers
+           line=dict(width=2),  # Line width
+           marker=dict(size=8)  # Marker size
+        )
+
+       st.plotly_chart(line_fig)
+       
          
        output = BytesIO()
        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-           merged_dfram.to_excel(writer, sheet_name='Sheet1', index=False)
-       if not merged_dfram.empty:    
-          st.download_button(label='Ladda ner excel', data=output, file_name='ForsskolebarnIndex.xlsx', key='barn')
+           melted_data.to_excel(writer, sheet_name='Sheet1', index=False)
+       if not melted_data.empty:    
+          st.download_button(label='Ladda ner excel', data=output, file_name='Gymnasieelever med examen.xlsx', key='barn')
        else:
             st.warning("No data to display.")
    else:
