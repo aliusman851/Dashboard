@@ -71,7 +71,7 @@ st.header('En sida med visualiseringar av data för olika områden')
 option_selected= False
 
 page_utbildning = {
-    "Välj":"",  
+    "Välj eller sök":"",  
     "Behorighet yrkesprogram": show_yrkesprogram,
     "Examinerade gymnasieelev": show_gymnasieelever,
     "Förskolebarn": show_forskolebarn,
@@ -81,7 +81,7 @@ page_utbildning = {
 }
 page_Soc = {
     
-    "Välj":"",
+    "Välj eller sök":"",
     "Hemtjänst äldreomsorg behandling":show_Aldreomsorgbehandling, 
     "Hemtjänst äldreomsorg åsikter":show_Aldreomsorgasikter, 
     "Hemtjänst äldreomsorg trygghet":show_Aldreomsorgtrygghet, 
@@ -93,7 +93,7 @@ page_Soc = {
 }
 page_socioekonomi = {
    
-    "Välj":"",
+    "Välj eller sök":"",
     "Kvalitetsindex LSS":show_Kvalitetsindex, 
     "Hemtjänst/särskilt boende)Index":show_SarskiltboendeIndex,
     "Barn inskrivna i förskola":show_ForskolebarnIndex,
@@ -107,27 +107,52 @@ page_socioekonomi = {
     "Deltagartillfällen i idrottsföreningar":show_Deltagartillfallen,
     "Invånare 16-24 år som varken arbetar eller studerar":show_InvanareArbstud
 }
-st.sidebar.title("Navigation")
-navigation_utbildning = st.sidebar.selectbox('Utbildning', list(page_utbildning.keys()))
-if navigation_utbildning != "Välj":
+st.sidebar.title("Välj nyckeltal")
+st.sidebar.markdown(
+    """
+    <style>
+    .sidebar-title {
+        font-weight: bold;
+        font-size: 15px;
+        margin: 0; /* Remove margin around title */
+        padding: 0; /* Remove padding around title */
+    }
+    .css-1r7x1e8 {  /* Streamlit selectbox container class */
+        margin: 0; /* Remove margin around selectbox */
+        padding: 0; /* Remove padding around selectbox */
+    }
+    .st-ak div {  /* Adjust class names as needed */
+        cursor: pointer; /* Change cursor to pointer when hovering */
+    }
+    
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+st.sidebar.markdown("<h4 class='sidebar-title'>Barn och utbildning</h4>", unsafe_allow_html=True)
+navigation_utbildning = st.sidebar.selectbox('', list(page_utbildning.keys()))
+if navigation_utbildning != "Välj eller sök":
     page_utbildning[navigation_utbildning]()
 
 
     
 st.sidebar.title("")
-navigation_Soc = st.sidebar.selectbox('Soc', list(page_Soc.keys()))
-if navigation_Soc != "Välj":
+st.sidebar.markdown("<h4 class='sidebar-title'>Omsorg och hjälp</h4>", unsafe_allow_html=True)
+navigation_Soc = st.sidebar.selectbox('', list(page_Soc.keys()))
+if navigation_Soc != "Välj eller sök":
     page_Soc[navigation_Soc]()
 
 
-st.sidebar.title("Kommuner Jämförelse ")
-navigation_socioekonomi = st.sidebar.selectbox('socioekonomi', list(page_socioekonomi.keys()))
-if navigation_socioekonomi !="Välj":
+st.sidebar.title("Jämför nyckeltal")
+st.sidebar.markdown("<h4 class='sidebar-title'>Här kan du jämföra nyckeltal med andra kommuner.</h4>", unsafe_allow_html=True)
+navigation_socioekonomi = st.sidebar.selectbox('', list(page_socioekonomi.keys()))
+if navigation_socioekonomi !="Välj eller sök":
     page_socioekonomi[navigation_socioekonomi]()
 
-if (navigation_utbildning != "Välj" or 
-    navigation_Soc != "Välj" or 
-    navigation_socioekonomi != "Välj"):
+if (navigation_utbildning != "Välj eller sök" or 
+    navigation_Soc != "Välj eller sök" or 
+    navigation_socioekonomi != "Välj eller sök"):
     option_selected = True 
 
 if option_selected:

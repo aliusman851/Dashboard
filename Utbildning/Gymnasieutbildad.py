@@ -50,7 +50,7 @@ def show():
                          )
             fig.update_traces(hovertemplate="<br>".join([
               "År: %{y}",
-              "Andel(%): %{x}",
+            "Andel(%): %{x}",
               "Kommun: %{customdata[0]}",
               "Typ: %{customdata[1]}"
             ])) 
