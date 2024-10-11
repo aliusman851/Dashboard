@@ -28,7 +28,7 @@ class Ekonomiskstandard(BaseGraph):
         self.all_min_value.append(min_value)
         self.all_max_value.append(max_value)
 
-        melted_data = melted_data.melt(
+        melted_data = self.df.melt(
             id_vars=["ar", "Kommun"],
             value_vars=["Value_T"],
             var_name="Type",

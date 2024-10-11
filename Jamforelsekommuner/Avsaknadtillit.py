@@ -4,7 +4,7 @@ import plotly.express as px
 import pandas as pd
 
 
-class Deltagartillfallen(BaseGraph):
+class Avsaknadtillit(BaseGraph):
     api_url = [
         "https://nav.utvecklingfalkenberg.se/items/Tillitslos_Falkenberg",
         "https://nav.utvecklingfalkenberg.se/items/Tillitslos_Aneby",
@@ -62,5 +62,5 @@ class Deltagartillfallen(BaseGraph):
 
 
 def show():
-    graph = Deltagartillfallen()
+    graph = Avsaknadtillit()
     graph.show()

@@ -40,10 +40,10 @@ class Gymnasieelever(BaseGraph):
         if data is not None and len(data) > 0:
             selected_kommuner = st.multiselect(
                 "Välj kommun(er)",
-                data["Kommun"].unique(),
-                default=data["Kommun"].unique()[0],
+                data["kommun"].unique(),
+                default=data["kommun"].unique()[0],
             )
-            filtered_data = data[data["Kommun"].isin(selected_kommuner)]
+            filtered_data = data[data["kommun"].isin(selected_kommuner)]
 
             fig = px.line(
                 filtered_data,
