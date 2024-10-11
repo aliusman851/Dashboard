@@ -1,103 +1,82 @@
+from BaseGraph import BaseGraph
 import streamlit as st
 import plotly.express as px
-import requests
 import pandas as pd
-from io import BytesIO
-import plotly.graph_objects as go
 
 
+class Gymnasieelever(BaseGraph):
+    api_url = [
+        "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Falkenberg",
+        "https://nav.utvecklingfalkenberg.se/items/Gymnaiseelever_Aneby",
+        "https://nav.utvecklingfalkenberg.se/items/Gymnasielever_Laholm",
+        "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Ljungby",
+        "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Nynashamn",
+        "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Oskarshamn",
+        "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Ornskoldsvik",
+        "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Vetlanda",
+    ]
 
-cached_data = {}
-def fetch_data(api_url):
-    if api_url in cached_data:
-        return cached_data[api_url]
-    response = requests.get(api_url)
-    if response.status_code == 200:
-        data = response.json()
-        return data
-    else:
-        st.error("Failed to fetch data from API")
-        return None
-    
+    def process_data(self):
+        self.df["Gymnasieelever_M"] = self.df["Gymnasieelever_M"].round(0)
+        self.df["Gymnasieelever_K"] = self.df["Gymnasieelever_K"].round(0)
+        self.df["Gymnasieelever_T"] = self.df["Gymnasieelever_T"].round(0)
+
+        melted_data = self.df.melt(
+            id_vars=["ar", "kommun"],
+            value_vars=["Gymnasieelever_T", "Gymnasieelever_M", "Gymnasieelever_K"],
+            var_name="Type",
+            value_name="Value",
+        )
+        type_labels = {
+            "Gymnasieelever_T": "Totalt(kvinnor och män)",
+            "Gymnasieelever_M": "Män",
+            "Gymnasieelever_K": "Kvinnor",
+        }
+        melted_data["Type"] = melted_data["Type"].map(type_labels)
+
+        return melted_data
+
+    def plot_data(self, data):
+        if data is not None and len(data) > 0:
+            selected_kommuner = st.multiselect(
+                "Välj kommun(er)",
+                data["Kommun"].unique(),
+                default=data["Kommun"].unique()[0],
+            )
+            filtered_data = data[data["Kommun"].isin(selected_kommuner)]
+
+            fig = px.line(
+                filtered_data,
+                x="ar",
+                y="Value",
+                range_x=[2014, 2024],
+                color="kommun",
+                line_dash="Type",
+                title="Gymnasieelever med examen inom 4 år",
+                labels={
+                    "ar": "År",
+                    "Value": "Andel (%)",
+                    "kommun": "Kommun",
+                    "Tyep": "typ",
+                },
+            )
+            fig.update_layout(
+                title_font_size=20,
+                xaxis_title_font_size=14,
+                legend_title_font_size=14,
+                legend_font_size=12,
+                xaxis_tickangle=-45,
+                hovermode="x unified",
+            )
+            fig.update_traces(
+                mode="lines+markers",
+                line=dict(width=2),
+                marker=dict(size=8),
+            )
+
+            st.plotly_chart(fig)
+
+
 def show():
-   api_urls = [
-   "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Falkenberg",
-   "https://nav.utvecklingfalkenberg.se/items/Gymnaiseelever_Aneby",
-   "https://nav.utvecklingfalkenberg.se/items/Gymnasielever_Laholm",
-   "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Ljungby",
-   "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Nynashamn",
-   "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Oskarshamn",
-   "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Ornskoldsvik",
-   "https://nav.utvecklingfalkenberg.se/items/Gymnasieelever_Vetlanda"
-   
-   
-   ]
-   merged_data = []
-   for api_url in api_urls:
-        fetchdata = fetch_data(api_url)
-        df_ar1= pd.json_normalize(fetchdata['data'])
-        #df1 = pd.DataFrame(merged_data)
-        merged_data.append(df_ar1)
-        #st.write(merged_data)
-        merged_dfram = pd.concat(merged_data, ignore_index=True)
-        merged_dfram['Gymnasieelever_M'] = merged_dfram['Gymnasieelever_M'].round(0)
-        merged_dfram['Gymnasieelever_K'] = merged_dfram['Gymnasieelever_K'].round(0)
-        merged_dfram['Gymnasieelever_T'] = merged_dfram['Gymnasieelever_T'].round(0)
-      
-   selected_kommuner = st.multiselect('Välj kommun(er)', merged_dfram['kommun'].unique(),default=merged_dfram['kommun'].unique()[0])
-   filtered_data = merged_dfram[merged_dfram['kommun'].isin(selected_kommuner)]
-  
-   
-   if filtered_data is not None and not filtered_data.empty:
-       melted_data = filtered_data.melt(id_vars=['ar','kommun'], value_vars=['Gymnasieelever_T', 'Gymnasieelever_M', 'Gymnasieelever_K'],
-                                     var_name='Type', value_name='Value')
-
-        # Map column names to more readable labels
-       type_labels = {'Gymnasieelever_T': 'Totalt(kvinnor och män)', 'Gymnasieelever_M': 'Män', 'Gymnasieelever_K': 'Kvinnor'}
-       melted_data['Type'] = melted_data['Type'].map(type_labels)
-       #st.write(melted_data)
-    # Create Line Chart
-       line_fig = px.line(
-             melted_data,
-             x='ar',
-             y='Value',
-             #range_y=[0,100],
-             range_x=[2014,2024],
-             color='kommun',
-             line_dash='Type',
-             title='Gymnasieelever med examen inom 4 år',
-             labels={'ar': 'År', 'Value': 'Andel (%)', 'kommun': 'Kommun','Tyep':'typ'}
-        )
-       line_fig.update_layout(
-               title_font_size=20,  # Increase title font size
-               #title_x=0.5,  # Center the title
-               xaxis_title_font_size=14,  # Font size for X-axis title
-               #yaxis_title_font_size=14,  # Font size for Y-axis title
-               legend_title_font_size=14,  # Font size for legend title
-               legend_font_size=12,  # Font size for legend items
-               xaxis_tickangle=-45,  # Angle X-axis ticks for better readability
-               #yaxis_tickformat='.1%',  # Format Y-axis ticks as percentages
-               hovermode='x unified'  # Unified hover mode for better comparison
-        )
-       line_fig.update_traces(
-           mode='lines+markers',  # Display lines with markers
-           line=dict(width=2),  # Line width
-           marker=dict(size=8)  # Marker size
-        )
-
-       st.plotly_chart(line_fig)
-       
-         
-       output = BytesIO()
-       with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-           melted_data.to_excel(writer, sheet_name='Sheet1', index=False)
-       if not melted_data.empty:    
-          st.download_button(label='Ladda ner excel', data=output, file_name='Gymnasieelever med examen.xlsx', key='barn')
-       else:
-            st.warning("No data to display.")
-   else:
-     st.warning("No data to display.")
-    
-
-if __name__ == "__main__":
-    show()        
+    graph = Gymnasieelever()
+    graph.show()
