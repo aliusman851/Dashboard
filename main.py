@@ -36,14 +36,14 @@ def encode_image(image_path):
         img_bytes = f.read()
     img_str = base64.b64encode(img_bytes).decode()
     return img_str  
-img1= encode_image("C:/Users/Ali usman/Dashboard/Image/chart1.png")
-img2= encode_image("C:/Users/Ali usman/Dashboard/Image/chart2.png")
-img3= encode_image("C:/Users/Ali usman/Dashboard/Image/chart3.png")
-img4= encode_image("C:/Users/Ali usman/Dashboard/Image/sunburst.png")
-img5= encode_image("C:/Users/Ali usman/Dashboard/Image/barchart.png")
-img6= encode_image("C:/Users/Ali usman/Dashboard/Image/linechart.png")
-img7= encode_image("C:/Users/Ali usman/Dashboard/Image/img7.png")
-fbg= encode_image("C:/Users/Ali usman/Dashboard/Image/fbg.jpg")
+img1= encode_image("Image/chart1.png")
+img2= encode_image("Image/chart2.png")
+img3= encode_image("Image/chart3.png")
+img4= encode_image("Image/sunburst.png")
+img5= encode_image("Image/barchart.png")
+img6= encode_image("Image/linechart.png")
+img7= encode_image("Image/img7.png")
+fbg= encode_image("Image/fbg.jpg")
 
 header_with_image = f"""
                     <header style="background-image: url('data:image/jpeg;base64,{fbg}');
@@ -77,7 +77,6 @@ page_utbildning = {
     "Förskolebarn": show_forskolebarn,
     "Gymnasieutbildad": show_gymnasieutbildad,
     "Etablerade ungdomar": show_etableradeungdomar,
-    
 }
 page_Soc = {
     
@@ -152,7 +151,8 @@ if navigation_socioekonomi !="Välj eller sök":
 
 if (navigation_utbildning != "Välj eller sök" or 
     navigation_Soc != "Välj eller sök" or 
-    navigation_socioekonomi != "Välj eller sök"):
+    navigation_socioekonomi != "Välj eller sök"
+    ):
     option_selected = True 
 
 if option_selected:
