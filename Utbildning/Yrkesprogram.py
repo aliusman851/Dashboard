@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 
 
@@ -40,12 +40,12 @@ def show():
             fig =px.histogram(melted_data, 
                         y='Value',
                         x='ar',
-                        title='Elever i åk 9 som är behöriga till yrkesprogram kommunala (modellberäknat värde), andel(%)',
+                        #title='Elever i åk 9 som är behöriga till yrkesprogram kommunala (modellberäknat värde), andel(%)',
                         template=("plotly_white"),
                         labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
                         #custom_data=['kommun','Type'],
                         color='Type',
-                        width=700
+                        height=600
                         )
            
             fig.update_traces(customdata=melted_data[['kommun', 'Type']].values)
@@ -56,17 +56,27 @@ def show():
               "Typ: %{customdata[1]}"
             ])) 
             fig.update_layout(
-                
-                #plot_bgcolor="rgba(2,0,1,4)",
+                autosize=True,
                 xaxis=(dict(showgrid=False)),
+                #yaxis=dict(showgrid=True),
+                margin=dict(l=20, r=0, t=40, b=20),
+                legend=dict(orientation="v", yanchor="bottom", y=1, xanchor="right", x=1),
+                #responsive=True  # Make the graph responsive
             )
-            st.plotly_chart(fig)
+            st.plotly_chart(fig, use_container_width=True)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 melted_data.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Behöriga till yrkesprogram kommunala.xlsx', key='Yrkesprogram')
-            mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                 
+            with st.container():
+                st.markdown('<div class="download-button">', unsafe_allow_html=True)     
+                st.download_button(
+                    label='Ladda ner excel', 
+                    data=output.getvalue(), 
+                    file_name='Behöriga till yrkesprogram kommunala.xlsx',
+                    key='Yrkesprogram', 
+                    mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    )
+                st.markdown('</div>', unsafe_allow_html=True) 
         else:
             st.warning("No data to display.")
 

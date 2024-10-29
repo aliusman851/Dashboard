@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 
 
@@ -40,32 +40,41 @@ def show():
             fig = px.bar(melted_data, 
                          x='ar', 
                          y='Value', 
-                         title='Brukarbedömning särskilt boende äldreomsorg-trygghet, andel(%)',
-                         template= "plotly_white",
+                         #title='Brukarbedömning särskilt boende äldreomsorg-trygghet, andel(%)',
+                         template= "plotly_dark",
                          labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
                          custom_data=['kommun','Type'],
                          color='Type',
-                         width=800
+                         height=600
                          
                          
                          )
-            fig.update_layout(
-                xaxis=dict(tickmode="linear"),
-                plot_bgcolor="rgba(3,2,1,0)",
-                yaxis=(dict(showgrid=False))
-            )
+            
             fig.update_traces(hovertemplate="<br>".join([
               "År: %{x}",
               "Andel(%): %{y}",
               "Kommun: %{customdata[0]}",
               "Typ: %{customdata[1]}"
             ])) 
+            fig.update_layout(
+                xaxis=dict(tickmode="linear"),
+                plot_bgcolor="rgba(3,2,1,0)",
+                yaxis=(dict(showgrid=False)),
+                autosize=True,
+                #margin=dict(l=0, r=0, t=0, b=0),
+                legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1),
+            )
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 melted_data.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Särskilt boende äldreomsorg-trygghet.xlsx', key='sarskiltaldreomsorgtrygghet')
-                 
+            with st.container():
+                st.markdown('<div class="download-button">', unsafe_allow_html=True)    
+                st.download_button(
+                    label='Ladda ner excel', 
+                    data=output, file_name='Särskilt boende äldreomsorg-trygghet.xlsx', 
+                    key='sarskiltaldreomsorgtrygghet')
+                st.markdown('</div>', unsafe_allow_html=True) 
         else:
             st.warning("No data to display.")
 

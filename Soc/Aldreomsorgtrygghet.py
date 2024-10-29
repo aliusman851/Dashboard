@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 
 
@@ -40,30 +40,39 @@ def show():
             fig = px.bar( melted_data,
                 x= 'Value', 
                 y= "ar" ,
-                title='Brukarbedömning hemtjänst äldreomsorg-trygghet, andel(%)',
+                #title='Brukarbedömning hemtjänst äldreomsorg-trygghet, andel(%)',
                 orientation='h',
                 template=("plotly_white"),
                 labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
-                width=800,
+                height=600,
                 custom_data=['kommun','Type'],
                 color='Type'
             
             )
-            fig.update_layout(
-                
-                xaxis=(dict(showgrid=False))
-                  )
+            
             fig.update_traces(hovertemplate="<br>".join([
               "År: %{y}",
               "Andel(%): %{x}",
               "Kommun: %{customdata[0]}",
               "Typ: %{customdata[1]}"
-            ])) 
+            ]))
+            fig.update_layout(
+                autosize=True,
+                xaxis=(dict(showgrid=False)),
+                yaxis=dict(showgrid=False),
+                legend=dict(orientation="v", yanchor="bottom", y=1, xanchor="right", x=1),
+                  ) 
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 melted_data.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Äldreomsorg-trygghet.xlsx', key='behandlade')
+            with st.container():
+                st.markdown('<div class="download-button">', unsafe_allow_html=True)    
+                st.download_button(
+                    label='Ladda ner excel', 
+                    data=output, file_name='Äldreomsorg-trygghet.xlsx', 
+                    key='behandlade')
+                st.markdown('</div>', unsafe_allow_html=True)
                  
         else:
             st.warning("No data to display.")

@@ -1,9 +1,10 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 import plotly.graph_objects as go
+from urllib.parse import urlparse, parse_qs
 
 
 
@@ -51,18 +52,10 @@ def show():
    filtered_data = merged_dfram[merged_dfram['Kommun'] == selected_kommuner]"""
    selected_kommuner = st.multiselect('Välj kommun(er)', merged_dfram['Kommun'].unique(),default=merged_dfram['Kommun'].unique()[0])
    filtered_data = merged_dfram[merged_dfram['Kommun'].isin(selected_kommuner)]
-        #merged_dfram['Total_percentage'] = 100
-        #merged_dfram['percentage'] = (merged_dfram['Index_Totalt'] / merged_dfram['Total_percentage']) * 100
-        #merged_df = merged_dfram.sort_values(by='ar')
-        #st.write(merged_dfram)
-        #st.write(min_value,max_value)
-          
+       
         
    if filtered_data is not None and len(filtered_data) > 0:
-        
-         #year_options = merged_dfram['ar'].unique().tolist()
-         #year = st.selectbox('select year', year_options,0)
-         #merged_dfram = merged_dfram[merged_dfram['ar']==year]
+    
          fig  =px.bar(filtered_data, 
                          x='ar', 
                          y='Index_Totalt',
@@ -85,10 +78,9 @@ def show():
                          y='Kommun',
                          height=800,
                          width=800,
-                         orientation='h',
+                         #orientation='h',
                          color='Kommun',
-                         labels={'ar': 'År', 'Index_Totalt': 'Barn 1-5 år inskrivna i förskola, andel (%)'},
-                         title='Barn 1-5 år inskrivna i förskola, andel (%)',
+                         labels={'ar': 'År'},
                          range_x=[10,100],
                          animation_frame='ar',
                          color_continuous_scale='agsunset',
@@ -98,15 +90,20 @@ def show():
                          
                          #animation_group='Kommun',
                 )
-         st.markdown("<h1 style='font-size:15px;'>Barn 1-5 år inskrivna i förskola, andel (%)", unsafe_allow_html=True)
+         #st.markdown("<h1 style='font-size:15px;'>Barn 1-5 år inskrivna i förskola, andel (%)", unsafe_allow_html=True)
          
          #fig.update_traces(textposition='bottom center', marker={"opacity":0.7})
          #fig2.update_traces(textposition='bottom center', marker={"opacity":0.7})
          fig2.update_traces(textposition='outside')
          fig2.update_layout(xaxis=dict(range=[all_min_value, all_max_value]))
-         fig2.update_layout(coloraxis_showscale=False)
+         fig2.update_layout(
+             coloraxis_showscale=False,
+             autosize=True,
+             xaxis=(dict(showgrid=False)),
+             yaxis=dict(showgrid=False),
+             legend=dict(orientation="h", yanchor="bottom", y=1.2, xanchor="right", x=1),)
          fig.update_layout(
-            margin = dict(t=50, l=0, r=200, b=0),
+            autosize = True,
             showlegend=True,
             xaxis_title='År',
             yaxis_title='Index(%)',
@@ -121,8 +118,19 @@ def show():
           "Kommun: %{customdata[0]}",
           
         ]))
+         fig.update_layout(
+                autosize=True,
+                xaxis=(dict(showgrid=False)),
+                yaxis=dict(showgrid=False),
+                legend=dict(orientation="h", yanchor="bottom", y=1.2, xanchor="right", x=1),
+                #responsive=True  # Make the graph responsive
+            )
+         
          st.plotly_chart(fig)
+         # Conditionally render the animated graph based on screen width
+         
          st.plotly_chart(fig2)
+         
          output = BytesIO()
          with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
            filtered_data.to_excel(writer, sheet_name='Sheet1', index=False)

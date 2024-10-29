@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 import plotly.graph_objects as go
 
@@ -62,22 +62,17 @@ def show():
              x='ar',
              y='Value',
              #range_y=[0,100],
-             range_x=[2014,2024],
+             #range_x=[2014,2024],
+             height=700,
              color='kommun',
              line_dash='Type',
-             title='Gymnasieelever med examen inom 4 år',
              labels={'ar': 'År', 'Value': 'Andel (%)', 'kommun': 'Kommun','Tyep':'typ'}
         )
        line_fig.update_layout(
-               title_font_size=20,  # Increase title font size
-               #title_x=0.5,  # Center the title
-               xaxis_title_font_size=14,  # Font size for X-axis title
-               #yaxis_title_font_size=14,  # Font size for Y-axis title
-               legend_title_font_size=14,  # Font size for legend title
-               legend_font_size=12,  # Font size for legend items
-               xaxis_tickangle=-45,  # Angle X-axis ticks for better readability
-               #yaxis_tickformat='.1%',  # Format Y-axis ticks as percentages
-               hovermode='x unified'  # Unified hover mode for better comparison
+            autosize=True,
+            legend_font_size=12,  # Font size for legend items
+            xaxis_tickangle=-45,  # Angle X-axis ticks for better readability
+            legend=dict(orientation="v", yanchor="bottom", y=1, xanchor="right", x=1),
         )
        line_fig.update_traces(
            mode='lines+markers',  # Display lines with markers

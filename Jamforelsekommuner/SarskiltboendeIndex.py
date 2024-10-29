@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 import pyarrow as pa
 
@@ -67,26 +67,17 @@ def show():
         )
       fig.update_traces(hoverinfo='ar', selector=dict(type='sunburst', hoverinfo='ar'))
       fig.update_traces(hovertemplate= 'Index_Totalt')
-      #st.markdown("<h1 style='font-size:15px;'>Brukarbedömning särskiltboende äldreomsorg-bemötande, förtroende,medelvärde — Kommuner,Index andel(%)", unsafe_allow_html=True)
+      #st.markdown("<h1 style='font-size:15px;'>Brukarbedömning särskiltboende äldreomsorg-bemötande, förtroende,medelvärde — Kommuner,Index andel(%)", unsafe_allow_html=True) 
       fig.update_layout( 
-          #margin = dict(t=0, l=0, r=50, b=0),
-          title={
-               'text': "Brukarbedömning särskiltboende äldreomsorg-bemötande, förtroende,medelvärde — Kommuner,Index andel(%)",
-               'y':0.95,
-               'x':0.5,
-               'xanchor': 'center',
-               'yanchor': 'top'
-            },
-            font=dict(
-            size=14,
-        ),
-        margin=dict(t=50, l=25, r=25, b=25),
-          
-        showlegend=True,
+        autosize=True,
+        margin=dict(l=0, r=0, t=0, b=20),
+        xaxis=(dict(showgrid=False)),
+        yaxis=dict(showgrid=False),
+        legend=dict(orientation="h", yanchor="bottom", y=0, xanchor="right", x=1),
         )
       #fig.update_traces(textinfo='label+percent entry')
       fig.update_traces(hovertemplate='<b>%{label}</b><br>År: %{customdata[0]}<br>Index(%): %{value:.2f}')
-      st.write(fig)
+      st.plotly_chart(fig)
      
       output = BytesIO()
       with pd.ExcelWriter(output, engine='xlsxwriter') as writer:

@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 import numpy as np
 
@@ -68,12 +68,17 @@ def show():
                     
                 )
    
-   fig.update_layout(title=f' Trångboddhet i flerbostadshus {value_type} över år',
-                  xaxis_title='År',
-                  yaxis_title='Andel(%)',
-                  width=800,
-                  #height=600
-                  )
+   fig.update_layout(
+            xaxis_title='År',
+            yaxis_title='Andel(%)',
+            height=500,
+            autosize=True,
+            xaxis=dict(showgrid=False),  # Smaller font size for axis titles
+            yaxis=dict(showgrid=False),
+            margin=dict(l=0, r=0, t=0, b=0),  # Adjust margins for mobile
+            legend=dict(orientation="h", yanchor="bottom", y=1.2, xanchor="right", x=1),
+           )  # Adjust gap between bars
+                  
    st.write(fig)
    
    output = BytesIO()

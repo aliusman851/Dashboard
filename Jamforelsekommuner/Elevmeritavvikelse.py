@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 
 
@@ -45,8 +45,8 @@ def show():
                       x="ar",
                       y="Value", 
                       color="Kommun",
-                      width=800,
-                      title='Elever genomsnittligt meritvärde avvikelse, andel (%) ',
+                      height=700,
+                      #title='Elever genomsnittligt meritvärde avvikelse, andel (%) ',
                       labels={'ar': 'År', 'Value': 'Andel(%)'},
                       #custom_data='Kommun', 
                       hover_data=merged_dfram.columns)
@@ -58,7 +58,15 @@ def show():
           "Kommun: %{customdata[0]}",
           
         ]))
-       fig.update_layout(bargap=0.2)  # Adjust gap between bars
+       fig.update_layout(
+            bargap=0.2,
+            autosize=True,
+            xaxis=dict(showgrid=False, title_font=dict(size=12)),  # Smaller font size for axis titles
+            yaxis=dict(showgrid=False, title_font=dict(size=12)),
+            margin=dict(l=20, r=20, t=30, b=30),  # Adjust margins for mobile
+            legend=dict(orientation="v", yanchor="bottom", y=1.2, xanchor="right", x=1),
+            font=dict(size=10),
+           )  # Adjust gap between bars
        fig.update_xaxes(title_text="År")  # Update x-axis label
        fig.update_yaxes(title_text="Andel(%)")  # Update y-axis label
        #fig.update_layout(title_x=0.5)  # Center title

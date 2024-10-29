@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 import plotly.graph_objects as go
 
@@ -18,7 +18,7 @@ def fetch_data(api_url):
     else:
         st.error("Failed to fetch data from API")
         return None
-    
+
 def show():
    api_urls = [
    "https://nav.utvecklingfalkenberg.se/items/Ekonomiskstandard_Falkenberg",    
@@ -55,9 +55,7 @@ def show():
    check_data['Type'] = check_data['Type'].map(type_labels)
    check_data['Kommun_Value'] = check_data.apply(lambda row: f"{row['Kommun']}: {row['Value']}", axis=1)        
    if check_data is not None and len(check_data) > 0:
-        #year_options = merged_dfram['ar'].unique().tolist()
-        #year = st.selectbox('select year', year_options,0)
-        #merged_dfram = merged_dfram[merged_dfram['ar']==year]
+       
          fig  =px.scatter(check_data, 
                  x='ar',
                  y='Value',
@@ -67,7 +65,7 @@ def show():
                  hover_name='Kommun',  # Display 'Kommun' as hover information
                  labels={'ar': 'År', 'Value': 'Andel(%)', 'Kommun': 'Kommun'},  # Label axes and legend
                  #title='Distribution of Value_T Over Time by Kommun',  # Set title
-                 template='plotly_dark')  # Dark theme
+                 template='plotly_white')  # Dark theme
                   
          fig2  =px.scatter(check_data, 
                   x='Value', 
@@ -75,40 +73,64 @@ def show():
                   size='Value',  # Set size based on the 'Value_T' column
                   animation_frame='ar',  # Set animation frame to 'ar'
                   animation_group='Kommun',  # Set animation group to 'Kommun' for grouping
-                  range_x=[min(all_min_value), max(all_max_value)],  # Set range based on minimum and maximum values
-                  #range_x=[0,100],
+                  range_x=[min(all_min_value), max(all_max_value)],
                   color='Kommun',  # Set color based on 'Kommun' column
                   labels={'Value': 'Andel(%)'},
-                  title='Invånare med låg ekonomisk standard(0-19år)',
+                  #title='Invånare med låg ekonomisk standard(0-19år)',
                   color_continuous_scale='agsunset',
-                  #width=800,
-                  #range_x=[5,40],
                   hover_name='Kommun', 
                   text = check_data['Kommun_Value'],# Display Kommun as hover information
-                  size_max=50)  # Set maximum size of bubble    
+                  size_max=40)  # Set maximum size of bubble    
                      
-         st.markdown("<h1 style='font-size:15px;'>Invånare med låg ekonomisk standard(0-19år)", unsafe_allow_html=True)
+         #st.markdown("<h1 style='font-size:15px;'>Invånare med låg ekonomisk standard(0-19år)", unsafe_allow_html=True)
          fig.update_traces(marker=dict(line=dict(width=2, color='DarkSlateGrey')), selector=dict(mode='markers'))
+         
 
          # Update layout
-         fig.update_layout(width=800, height=600)  # Adjust width and height
+         fig.update_layout(
+                autosize=True,
+                height=590,
+                xaxis=dict(showgrid=False, title_font=dict(size=12)),  # Smaller font size for axis titles
+                yaxis=dict(showgrid=False, title_font=dict(size=12)),
+                margin=dict(l=0, r=0, t=0, b=0),
+                
+                legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1),
+                
+                )  # Adjust width and height
          fig.update_xaxes(title_text='År')  # X-axis label
          fig.update_yaxes(title_text='Andel(%)')  # Y-axis label
          fig.update_coloraxes(colorbar_title='Kommun')
-         fig2.update_traces(textposition='top center')
+         #fig2.update_traces(textposition='top center')
          #fig2.update_layout(xaxis=dict(range=[all_min_value, all_max_value]))
-         fig2.update_traces(marker=dict(line=dict(width=2, color='DarkSlateGrey')), selector=dict(mode='markers'))  # Add marker styling
+         #fig2.update_traces(marker=dict(line=dict(width=2, color='DarkSlateGrey')), selector=dict(mode='markers'))  # Add marker styling
+         
+         fig2.update_layout(
+              coloraxis_showscale=False,
+              autosize=True,
+              height=590,
+              margin=dict(l=0, r=0, t=0, b=0),
+              xaxis=(dict(showgrid=False)),
+              yaxis=dict(showgrid=False),
+              legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1)
+              
 
-         fig2.update_layout(coloraxis_showscale=False)
+            )
          st.plotly_chart(fig)
-         st.plotly_chart(fig2)
+         st.plotly_chart(fig2, )
+         
+         
           
 
          output = BytesIO()
          with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             check_data.to_excel(writer, sheet_name='Sheet1', index=False)
-         if not check_data.empty:    
-            st.download_button(label='Ladda ner excel', data=output, file_name='Låg ekonomisk standard.xlsx', key='barn')
+         if not check_data.empty:
+                st.download_button( 
+                    label='Ladda ner excel', 
+                    data=output, 
+                    file_name='Låg ekonomisk standard.xlsx', 
+                    key='barn')
+                
          else:
             st.warning("No data to display.")
    else:

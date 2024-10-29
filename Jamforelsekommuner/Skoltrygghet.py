@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 
 cached_data = {}
@@ -53,16 +53,23 @@ def show():
                     y='Value', 
                     color="Kommun",
                     barmode='group',
-                    width=800,
-                    title='Elever i åk 8: Känner du dig trygg i skolan, andel (%) ',
+                    height=600,
+                    #title='Elever i åk 8: Känner du dig trygg i skolan, andel (%) ',
                     #range_x=[2021,2026],
                     #orientation='h',
                     labels={'ar': 'År', 'Value': 'Andel(%)'},
-                     hover_data={'Type': True} 
+                    hover_data={'Type': True} 
                     #hover_data=check_data.columns
                 )
    fig.update_traces(marker_line_color='rgb(8,48,107)', marker_line_width=1.5, opacity=0.8) # Adjust marker style
-   fig.update_layout(bargap=0.5)  # Adjust gap between bars
+   fig.update_layout(
+        bargap=0.5,  
+        autosize=True,
+        xaxis=dict(showgrid=False),  # Smaller font size for axis titles
+        yaxis=dict(showgrid=False),
+        margin=dict(l=0, r=0, t=0, b=0),  # Adjust margins for mobile
+        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1))
+     # Adjust gap between bars)  # Adjust gap between bars
    fig.update_xaxes(title_text="År")  # Update x-axis label
    #fig.update_yaxes(title_text="Andel(%)")  # Update y-axis label
    #fig.update_layout(title_x=0.5)  # Center title

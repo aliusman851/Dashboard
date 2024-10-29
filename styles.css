@@ -1,0 +1,140 @@
+/* Default Styles for larger screens */
+
+#moving-image-col1 {
+    position: absolute;
+    top: 50%;
+    left: 30%;
+}
+
+#moving-image-col2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    
+}
+#moving-image-col1 img, #moving-image-col2 img {
+    max-width: 250px;
+    height: auto;
+    width: auto; 
+
+    
+}
+#moving-image-col2 img {
+    max-width: 450px; 
+    max-height: 400px;
+    
+}
+
+
+/* Responsive Styles for smaller screens */
+@media screen and (max-width: 767px) {
+    
+    #moving-image-col1 {
+        display: none;
+    }
+    #moving-image-col1 img{
+        display: none;
+    }
+    #moving-image-col2 {
+        width: 100%; /* Set width to full on mobile devices */
+        margin-bottom: 20px;
+    }
+    #moving-image-col2 img {
+        max-width: 100%; /* Scale images appropriately */
+        height: auto;
+        
+    }
+}
+
+/* Responsive styles for even smaller screens */
+@media screen and (max-width: 480px) {
+    #moving-image-col1 {
+        display: none; /* Hide column 1 on mobile devices */
+    }
+
+    #moving-image-col1 img {
+        display: none; /* Hide images in column 1 on mobile devices */
+    }
+    #moving-image-col2 img {
+         /* Move to the right side on mobile devices */
+        max-width: 80%; /* Scale down further for very small screens */
+        justify-content: center;
+        
+    }
+}
+ @keyframes moveContinuouslycolone {
+    
+    0% { transform: translateX(-50%); }
+    50% { transform: translateX(-55%); }
+    100% { transform: translateX(-50%); }
+}
+ #moving-image-col1 img,#moving-image-col2 img {
+
+    animation: moveContinuouslycolone 5s linear infinite;
+}
+
+.stSidebar {
+    width: auto; /* Set default width */
+    padding-top: 215px; /* Adjust top padding */
+    cursor: pointer;
+   
+}
+
+/* Optional: Reduce padding or customize the appearance */
+.stSidebar div {
+    width: 99%;
+    padding: 5px 0; /* Adjust padding around each item */
+    left: 0.5%; 
+    
+}
+
+.stDownloadButton {
+    display: flex;
+    justify-content: center; /* Center the button */
+    margin: 20px 0; /* Add margin for spacing */
+    cursor: pointer;
+    border-radius: 5px;
+    
+}
+.stDownloadButton {
+    padding: 10px 20px; /* Add some padding to the button */
+    font-size: 16px; /* Ensure a good font size */
+    
+}
+@media screen and (max-width: 480px) {
+    .stDownloadButton {
+        flex-direction: column; /* Stack items vertically on small screens */
+    }
+
+    .stDownloadButton {
+        width: 200%; /* Full width on smaller screens */
+    }
+
+}
+.main-svg {
+    width: auto;   /* Full width for both graphs */
+    height: auto;  /* Maintain aspect ratio */
+    margin: 0 auto; /* Center the graph */
+    padding: 10px; /* Add some padding */
+}
+@media screen and (max-width: 768px) {
+    .main-svg {
+        width: auto;   /* Full width on small screens */
+        height: auto;  /* Maintain aspect ratio */
+        margin: 0 auto; /* Center the graph horizontally */
+        padding: 10px;  /* Add some padding for aesthetics */
+        overflow: hidden; /* Hide any overflow content */
+        box-shadow: none; /* Remove shadow if necessary */
+        transform: scale(1); /* Keep scale to normal to ensure x-axis is visible */
+        text-orientation: upright;
+        
+    }
+    
+    
+}
+
+.st-ak {
+    cursor: pointer;
+}
+    
+    

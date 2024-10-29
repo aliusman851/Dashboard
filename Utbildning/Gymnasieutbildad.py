@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 
 def fetch_data(api_url):
@@ -40,12 +40,13 @@ def show():
                          y='ar', 
                          x='Value', 
                          orientation='h',
-                         title='Invånare 25-64 år med eftergymnasial utbildning, andel(%)',
+                         #title='Invånare 25-64 år med eftergymnasial utbildning, andel(%)',
                          width=800,
                          template=("plotly_white"),
                          labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
                          custom_data=['kommun','Type'],
                          color='Type',
+                         height=600
                         
                          )
             fig.update_traces(hovertemplate="<br>".join([
@@ -54,12 +55,29 @@ def show():
               "Kommun: %{customdata[0]}",
               "Typ: %{customdata[1]}"
             ])) 
+            fig.update_layout(
+                autosize=True,
+                xaxis=(dict(showgrid=False)),
+                #yaxis=dict(showgrid=True),
+                margin=dict(l=0, r=0, t=40, b=20),
+                legend=dict(orientation="v", yanchor="bottom", y=1, xanchor="right", x=1),
+                #responsive=True  # Make the graph responsive
+            )
             
-            st.plotly_chart(fig)
+            st.plotly_chart(fig,  use_container_width=True)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 melted_data.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Invånare eftergymnasial utbildning.xlsx', key='Gymnasieutbildad')
+            with st.container():
+                st.markdown('<div class="download-button">', unsafe_allow_html=True)    
+                st.download_button(
+                    label='Ladda ner excel', 
+                    data=output, 
+                    file_name='Invånare eftergymnasial utbildning.xlsx',
+                    key='Gymnasieutbildad',
+                    mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    )
+                st.markdown('</div>', unsafe_allow_html=True) 
            
         else:
             st.warning("No data to display.")

@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 
 
@@ -40,7 +40,7 @@ def show():
             fig = px.line(melted_data, 
                           x='ar', 
                           y='Value',  
-                          title='Gymnasieelever med examen inom 3 år, kommunala skolor, andel(%), avvikelse från modellberäknat värde',
+                          #title='Gymnasieelever med examen inom 3 år, kommunala skolor, andel(%), avvikelse från modellberäknat värde',
                           markers=True,
                           template=("plotly_white"),
                           labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
@@ -56,11 +56,27 @@ def show():
               "Kommun: %{customdata[0]}",
               "Typ: %{customdata[1]}"
             ])) 
-            st.plotly_chart(fig)
+            fig.update_layout(
+                autosize=True,
+                xaxis=(dict(showgrid=False)),
+                yaxis=dict(showgrid=False),
+                margin=dict(l=0, r=0, t=40, b=20),
+                legend=dict(orientation="v", yanchor="bottom", y=1.5, xanchor="right", x=1),
+                #responsive=True  # Make the graph responsive
+            )
+            st.plotly_chart(fig, use_container_width=True)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 melted_data.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Gymnasieelever med examen inom 3 år.xlsx', key='Gymnasieelever')
+            with st.container():
+                st.markdown('<div class="download-button">', unsafe_allow_html=True)     
+                st.download_button(
+                    label='Ladda ner excel', 
+                    data=output, 
+                    file_name='Gymnasieelever med examen inom 3 år.xlsx', 
+                    key='Gymnasieelever'
+                    )
+                st.markdown('</div>', unsafe_allow_html=True) 
            
         else:
             st.warning("No data to display.")

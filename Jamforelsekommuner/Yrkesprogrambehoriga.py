@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 import plotly.graph_objects as go
 
@@ -55,6 +55,13 @@ def show():
          fig = update_bar_chart(selected_kommun, check_data)
 
          # Show figure
+         fig.update_layout(
+            autosize=True,
+            xaxis=dict(showgrid=False),  # Smaller font size for axis titles
+            yaxis=dict(showgrid=False),
+            margin=dict(l=0, r=0, t=0, b=0),  # Adjust margins for mobile
+            legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1),
+           )  # Adjust gap between bars
          st.plotly_chart(fig)
          output = BytesIO()
          with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
@@ -75,10 +82,10 @@ def update_bar_chart(selected_kommun,merged_data):
                  hover_name='Kommun',
                  #template='plotly_dark',
                  color_discrete_sequence=px.colors.qualitative.Pastel,  # Color palette
-                 width=800, height=600,  # Custom width and height
+                 height=600,  # Custom width and height
                  category_orders={'ar': sorted(filtered_df['ar'].unique())})   # Dark theme for better contrast
     
-    fig.update_layout(title=f'Elever i åk 9 som är behöriga till yrkesprogram, hemkommun, andel (%)',
+    fig.update_layout(
                       showlegend=True,
                       xaxis_title='År',
                       yaxis_title='Andel(%)',

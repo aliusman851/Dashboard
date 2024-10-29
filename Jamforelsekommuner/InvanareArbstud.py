@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 
 cached_data = {}
@@ -57,13 +57,20 @@ def show():
                        y='Value', 
                        color='Type', 
                        markers=True, 
+                       height=600,
                        width=800,
-                       title='Invånare 16-24 år som varken arbetar eller studerar, andel (%) ',
+                       #title='Invånare 16-24 år som varken arbetar eller studerar, andel (%) ',
                        labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
-                       template='plotly_white',
+                       template='plotly_dark',
                        custom_data=['Kommun', 'Type']
                     )
-  
+       fig.update_layout(
+            autosize=True,
+            xaxis=dict(showgrid=False),  # Smaller font size for axis titles
+            yaxis=dict(showgrid=False),
+            margin=dict(l=0, r=0, t=0, b=0),  # Adjust margins for mobile
+            legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1),
+           )  # Adjust gap between bars
        fig.update_traces(hovertemplate="<br>".join([
           "År: %{x}",
           "Andel(%): %{y}",

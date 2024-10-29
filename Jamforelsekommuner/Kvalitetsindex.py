@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 import numpy as np
 
@@ -57,11 +57,17 @@ def show():
                        template='plotly_dark',
                        #range_x=[10,100],
                        range_y=[0,110],
-                       title='Kvalitetsindex LSS, andel(%)',
+                       #title='Kvalitetsindex LSS, andel(%)',
                        labels={'KvalIndex': 'Kvalitetsindex(%)','Kommun': 'Kommun','ar': 'År'},
                        
-                       )
-        
+            )
+        fig.update_layout(
+                autosize=True,
+                xaxis=(dict(showgrid=False)),
+                yaxis=dict(showgrid=False),
+                legend=dict(orientation="h", yanchor="bottom", y=1.2, xanchor="right", x=1),
+                #responsive=True  # Make the graph responsive
+            )
         
         st.plotly_chart(fig)
         #st.plotly_chart(fig2)

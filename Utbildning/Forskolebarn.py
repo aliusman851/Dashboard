@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-import requests
-import pandas as pd
+import requests # type: ignore
+import pandas as pd # type: ignore
 from io import BytesIO
 
 
@@ -40,13 +40,14 @@ def show():
             fig = px.line(melted_data, 
                           x='ar', 
                           y='Value',
-                         title='Barn i kommunala förskola, andel(%) av inskrivna barn',
+                         #title='Barn i kommunala förskola, andel(%) av inskrivna barn',
                          markers=True,
                          text='Value',
                          labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
                          custom_data=['kommun','Type'],
                          color='Type',
-                         width=800
+                         height=500,
+                         template='plotly_white',
                          )
             fig.update_traces(hovertemplate="<br>".join([
               "År: %{x}",
@@ -54,12 +55,27 @@ def show():
               "Kommun: %{customdata[0]}",
               "Typ: %{customdata[1]}"
             ])) 
+            fig.update_layout(
+                autosize=True,
+                xaxis=(dict(showgrid=False)),
+                yaxis=dict(showgrid=False),
+                margin=dict(l=0, r=0, t=40, b=20),
+                legend=dict(orientation="v", yanchor="bottom", y=1.6, xanchor="right", x=1),
+                #responsive=True  # Make the graph responsive
+            )
             
             st.plotly_chart(fig)
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 df.to_excel(writer, sheet_name='Sheet1', index=False)
-            st.download_button(label='Ladda ner excel', data=output, file_name='Barn i kommunala förskola.xlsx', key='Forskolebarn')
+            with st.container():
+                st.markdown('<div class="download-button">', unsafe_allow_html=True)    
+                st.download_button(
+                    label='Ladda ner excel', 
+                    data=output, 
+                    file_name='Barn i kommunala förskola.xlsx', 
+                    key='Forskolebarn')
+                st.markdown('</div>', unsafe_allow_html=True) 
            
 
         else:
