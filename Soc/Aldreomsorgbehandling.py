@@ -43,7 +43,7 @@ def show():
                           y='Value', 
                           #title='Brukarbedömning hemtjänst äldreomsorg-bemötande, andel(%)',
                           markers=True,
-                          width=500,
+                          width=600,
                           labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
                           template='plotly_white',
                           custom_data=['kommun','Type'],

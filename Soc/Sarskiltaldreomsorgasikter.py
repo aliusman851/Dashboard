@@ -44,7 +44,7 @@ def show():
                                        markers=True,
                                        template=("plotly_white"),
                                        labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
-                                       width=500,
+                                       width=600,
                                        custom_data=['kommun','Type'],
                                        color='Type',
                                        

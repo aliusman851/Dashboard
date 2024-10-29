@@ -53,7 +53,7 @@ def show():
                        path= ['ar','Kommun','Index_Totalt'],
                        color='Kommun',
                        maxdepth=2,
-                       width=500,
+                       width=600,
                        #height=800,
                        hover_name='Kommun',
                        hover_data={'ar':'År', 'ar': True},

@@ -71,7 +71,7 @@ def show():
    fig.update_layout(
             xaxis_title='År',
             yaxis_title='Andel(%)',
-            width=500,
+            width=600,
             autosize=True,
             xaxis=dict(showgrid=False),  # Smaller font size for axis titles
             yaxis=dict(showgrid=False),

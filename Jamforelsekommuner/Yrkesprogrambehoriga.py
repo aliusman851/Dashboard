@@ -82,7 +82,7 @@ def update_bar_chart(selected_kommun,merged_data):
                  hover_name='Kommun',
                  #template='plotly_dark',
                  color_discrete_sequence=px.colors.qualitative.Pastel,  # Color palette
-                 width=500,  # Custom width and height
+                 width=600,  # Custom width and height
                  category_orders={'ar': sorted(filtered_df['ar'].unique())})   # Dark theme for better contrast
     
     fig.update_layout(

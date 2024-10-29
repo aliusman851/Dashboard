@@ -89,7 +89,7 @@ def show():
          # Update layout
          fig.update_layout(
                 autosize=True,
-                width=500,
+                width=600,
                 xaxis=dict(showgrid=False, title_font=dict(size=12)),  # Smaller font size for axis titles
                 yaxis=dict(showgrid=False, title_font=dict(size=12)),
                 margin=dict(l=0, r=0, t=0, b=0),

@@ -58,7 +58,7 @@ def show():
                        color='Type', 
                        markers=True, 
                        #height=600,
-                       width=500,
+                       width=600,
                        #title='Invånare 16-24 år som varken arbetar eller studerar, andel (%) ',
                        labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
                        template='plotly_dark',

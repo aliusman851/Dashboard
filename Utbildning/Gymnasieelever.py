@@ -46,7 +46,7 @@ def show():
                           labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
                           custom_data=['kommun','Type'],
                           color='Type',
-                          width=500,
+                          width=600,
                           text='Value'
                           
                           )

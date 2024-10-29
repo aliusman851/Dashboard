@@ -63,7 +63,7 @@ def show():
              y='Value',
              #range_y=[0,100],
              #range_x=[2014,2024],
-             width=500,
+             width=600,
              color='kommun',
              line_dash='Type',
              labels={'ar': 'År', 'Value': 'Andel (%)', 'kommun': 'Kommun','Tyep':'typ'}

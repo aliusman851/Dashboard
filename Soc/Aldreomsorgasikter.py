@@ -47,7 +47,7 @@ def show():
                            #title='Brukarbedömning hemtjänst äldreomsorg-hänsyn till åsikter och önskemål, andel(%)',
                            #color="Scenario",
                            markers=True,
-                           width=500,
+                           width=600,
                            custom_data=['kommun','Type'],
                            labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
                            template='plotly_dark',
