@@ -45,7 +45,7 @@ def show():
                       x="ar",
                       y="Value", 
                       color="Kommun",
-                      height=700,
+                      width=500,
                       #title='Elever genomsnittligt meritvärde avvikelse, andel (%) ',
                       labels={'ar': 'År', 'Value': 'Andel(%)'},
                       #custom_data='Kommun', 

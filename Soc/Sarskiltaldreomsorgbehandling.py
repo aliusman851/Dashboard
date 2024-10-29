@@ -45,7 +45,7 @@ def show():
                           labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
                           custom_data=['kommun','Type'],
                           color='Type',
-                          height=600
+                          width=500
                           )
             
             fig.update_traces(hovertemplate="<br>".join([

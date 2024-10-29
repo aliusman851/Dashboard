@@ -47,7 +47,7 @@ def show():
         fig = px.scatter(filtered_data,
                        x='ar', 
                        y='KvalIndex',
-                       width=800,
+                       width=500,
                        #height=400,
                        color ='Kommun',
                        size_max=35,

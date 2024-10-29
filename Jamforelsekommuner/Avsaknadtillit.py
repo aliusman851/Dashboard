@@ -72,7 +72,7 @@ def show():
                   #color=['Value_K', 'Value_M', 'Value_T'],
                   hover_data={'Kommun': True} ,  # Include additional hover data 
                   markers=True, 
-                  width=800,
+                  width=500,
                   #range_y=[10,40],
                   #title='Invånare 16-84 år med avsaknad av tillit till andra, andel (%) ',
                   labels={'ar': 'År', 'Value': 'Andel(%)','Type':'typ'},

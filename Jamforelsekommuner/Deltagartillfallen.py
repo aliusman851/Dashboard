@@ -65,7 +65,7 @@ def show():
                      size='Value',
                      range_y=[0,50],
                      #markers=True, 
-                     width=800,
+                     width=500,
                      #title='Deltagartillfällen i idrottsföreningar, antal/inv 7–25 år',
                      labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
                      template='plotly_white',

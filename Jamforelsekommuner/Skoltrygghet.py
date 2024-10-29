@@ -53,7 +53,7 @@ def show():
                     y='Value', 
                     color="Kommun",
                     barmode='group',
-                    height=600,
+                    width=500,
                     #title='Elever i åk 8: Känner du dig trygg i skolan, andel (%) ',
                     #range_x=[2021,2026],
                     #orientation='h',
