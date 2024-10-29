@@ -61,7 +61,7 @@ def show():
                 xaxis=(dict(showgrid=False)),
                 yaxis=dict(showgrid=False),
                 margin=dict(l=0, r=0, t=40, b=20),
-                legend=dict(orientation="v", yanchor="bottom", y=1.6, xanchor="right", x=1),
+                legend=dict(orientation="v", yanchor="bottom", y=1.2, xanchor="right", x=1),
                 #responsive=True  # Make the graph responsive
             )
             
