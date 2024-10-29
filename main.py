@@ -41,10 +41,10 @@ def encode_image(image_path):
         img_bytes = f.read()
     img_str = base64.b64encode(img_bytes).decode()
     return img_str  
-img1= encode_image("/workspaces/Dashboard/Image/chart1.png")
-img2= encode_image("/workspaces/Dashboard/Image/chart2.png")
-img3= encode_image("/workspaces/Dashboard/Image/chart3.png")
-fbg= encode_image("/workspaces/Dashboard/Image/fbg.jpg")
+img1= encode_image("C:/Users/Ali usman/Dashboard/Image/chart1.png")
+img2= encode_image("C:/Users/Ali usman/Dashboard/Image/chart2.png")
+img3= encode_image("C:/Users/Ali usman/Dashboard/Image/chart3.png")
+fbg= encode_image("C:/Users/Ali usman/Dashboard/Image/fbg.jpg")
 header_with_image = f"""
                     <header style="background-image: url('data:image/jpeg;base64,{fbg}');
                                    background-size: cover;
