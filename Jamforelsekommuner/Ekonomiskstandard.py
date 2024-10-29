@@ -107,7 +107,7 @@ def show():
          fig2.update_layout(
               coloraxis_showscale=False,
               autosize=True,
-              height=590,
+              width=600,
               margin=dict(l=0, r=0, t=0, b=0),
               xaxis=(dict(showgrid=False)),
               yaxis=dict(showgrid=False),

@@ -54,7 +54,7 @@ def show():
                        color='Kommun',
                        maxdepth=2,
                        width=600,
-                       #height=800,
+                       height=600,
                        hover_name='Kommun',
                        hover_data={'ar':'År', 'ar': True},
                        #template='plotly_dark',
