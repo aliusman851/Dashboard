@@ -41,7 +41,7 @@ def show():
                          x='Value', 
                          orientation='h',
                          #title='Invånare 25-64 år med eftergymnasial utbildning, andel(%)',
-                         width=800,
+                         width=500,
                          template=("plotly_white"),
                          labels={'ar': 'År', 'Value': 'Andel(%)', 'Type': 'Typ'},
                          custom_data=['kommun','Type'],

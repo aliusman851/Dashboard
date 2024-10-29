@@ -114,17 +114,17 @@ with st.sidebar:
     
 
 if selected == 'Barn och utbildning':
-    st.markdown("<h2 class='sidebar-title'>Barn och utbildning</h2>", unsafe_allow_html=True)
+    st.markdown("<h3 class='sidebar-title'>Barn och utbildning</h3>", unsafe_allow_html=True)
     navigation_utbildning = st.selectbox('Välj nyckeltal', list(page_utbildning.keys())) 
     #if  navigation_utbildning != "Välj eller sök":
     page_utbildning[navigation_utbildning]() 
 if selected == 'Omsorg och hjälp':
-    st.markdown("<h2 class='sidebar-title'>Omsorg och hjälp</h2>", unsafe_allow_html=True)
+    st.markdown("<h3 class='sidebar-title'>Omsorg och hjälp</h3>", unsafe_allow_html=True)
     navigation_Soc = st.selectbox('Välj nyckeltal', list(page_Soc.keys()))
     #if navigation_Soc != "Välj eller sök":
     page_Soc[navigation_Soc]()         
 if selected == 'Jämförnyckeltal':
-    st.markdown("<h2 class='sidebar-title'>Här kan du jämföra nyckeltal med andra kommuner.</h>", unsafe_allow_html=True)
+    st.markdown("<h3 class='sidebar-title'>Här kan du jämföra nyckeltal med andra kommuner.</h3>", unsafe_allow_html=True)
     navigation_socioekonomi = st.selectbox('Välj nyckeltal', list(page_socioekonomi.keys())) 
     #if navigation_socioekonomi !="Välj eller sök":
     page_socioekonomi[navigation_socioekonomi]() 
