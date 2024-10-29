@@ -1,5 +1,5 @@
 import streamlit as st
-import plotly.express as px
+#import plotly.express as px
 import requests # type: ignore
 import pandas as pd # type: ignore
 from io import BytesIO
