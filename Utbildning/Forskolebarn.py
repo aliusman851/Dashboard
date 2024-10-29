@@ -1,8 +1,9 @@
 import streamlit as st
 import plotly.express as px
-import requests # type: ignore
-import pandas as pd # type: ignore
+import requests 
+import pandas as pd
 from io import BytesIO
+
 
 
 def fetch_data(api_url):
